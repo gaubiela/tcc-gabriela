@@ -1,0 +1,63 @@
+\chapter*[Introdução]{Introdução}
+\addcontentsline{toc}{chapter}{Introdução}
+Sistemas de machine learning são construídos sobre a premissa de que os dados
+de produção se comportam como os dados de treinamento. O ambiente ao redor de
+um modelo, porém, muda continuamente: usuários evoluem, mercados se
+transformam, sensores se desgastam. Quando isso ocorre, um modelo bem
+treinado passa a produzir resultados progressivamente piores sem emitir
+qualquer erro explícito, fenômeno chamado de data drift, cuja característica
+mais grave é o silêncio da degradação \cite{sculley2015}. \citeonline{gama2014}
+formalizam o fenômeno como a mudança, ao longo do tempo, na distribuição
+conjunta entre os dados de entrada e a variável alvo, comprometendo a validade
+de um modelo treinado sobre uma distribuição que já não representa o presente.
+
+Detectar quando essa mudança ocorreu é hoje um problema relativamente maduro,
+com métodos que monitoram a distribuição das entradas ou o desempenho do
+classificador \cite{bayram2022}. O que permanece pouco resolvido é a etapa
+seguinte, a de decidir como reagir ao drift detectado. Uma prática comum é
+adotar uma resposta única e fixa, tipicamente descartar o modelo e
+retreiná-lo do zero. Há evidências, no entanto, de que nenhuma resposta é
+ótima em todos os cenários: estratégias adequadas para real drift são
+subótimas sob virtual drift \cite{oliveira2023}, o reaproveitamento de
+modelos supera o retreinamento do zero quando conceitos reaparecem
+\cite{sun2018}, e classificadores distintos reagem de formas substancialmente
+diferentes ao mesmo drift \cite{webb2016}. Além do tipo de drift, sua
+severidade também condiciona a resposta adequada: \citeonline{wang2022elastic},
+em estudo sobre boosting adaptativo à severidade do drift,
+demonstram formalmente que a severidade do drift determina a taxa de
+convergência necessária para readaptação do modelo, e \citeonline{wang2024quadcdd}
+argumentam que caracterizar um drift de forma completa exige representar tipo
+e severidade conjuntamente, não apenas um desses eixos isoladamente. A
+escolha da estratégia de resposta deveria, portanto, depender do tipo e da
+severidade do drift, além do classificador em uso, dependência conjunta que
+raramente é investigada de forma sistemática.
+
+Diante desse cenário, este trabalho é orientado pela seguinte questão de
+pesquisa: como a eficácia de diferentes estratégias de retreinamento varia em
+função do tipo e da severidade do drift enfrentado e do classificador
+monitorado, em ambiente de aprendizado em stream? Nessa questão, o tipo
+refere-se especificamente ao padrão temporal do drift (abrupto, gradual,
+incremental ou recorrente), não à distinção entre real drift e virtual
+drift discutida acima, tratada neste trabalho como dimensão conceitual à
+parte (Seção~\ref{sec:sinais}). A questão é respondida por
+um experimento fatorial controlado, no qual o tipo e a severidade do drift
+são conhecidos por injeção em dados sintéticos e o detector é fixo em todas
+as condições, de modo a isolar a estratégia de resposta como variável de
+interesse. Como desdobramento exploratório, investiga-se ainda se os padrões
+observados permitem esboçar uma orientação preliminar que relacione sinais
+observáveis em produção, tais como a magnitude da divergência calculada pelo
+detector, usada como proxy de severidade, a velocidade com que essa
+divergência varia, indicativa do padrão temporal, e a semelhança entre a
+distribuição atual e distribuições históricas, indício de recorrência, a
+estratégias de retreinamento recomendadas, de modo a orientar decisões
+futuras em pipelines de MLOps (Machine Learning Operations).
+
+Este trabalho está organizado da seguinte forma. O Capítulo 1 apresenta o
+referencial teórico, estabelecendo a definição formal de drift, suas
+dimensões de caracterização, os métodos de detecção, a operacionalização da
+severidade, as estratégias de retreinamento, os classificadores considerados
+e os sinais observáveis que fundamentam o desdobramento exploratório deste
+trabalho e o Capítulo 2 descreve a metodologia, detalhando a geração da stream sintética, a adaptação dos classificadores ao ambiente de stream, a operacionalização
+das estratégias de retreinamento, o desenho experimental fatorial, as
+métricas de avaliação, o protocolo de validação da questão derivada e o
+cronograma de execução.

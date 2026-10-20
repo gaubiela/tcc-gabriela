@@ -1,0 +1,25 @@
+\begin{resumo}
+Modelos de aprendizado de máquina em produção degradam ao longo do tempo
+devido ao data drift, mudança na distribuição dos dados que compromete
+silenciosamente a validade do modelo treinado. Embora a detecção desse
+fenômeno seja relativamente madura, a escolha de como reagir a um drift
+detectado permanece pouco investigada de forma sistemática, sobretudo quanto
+à interação entre o padrão temporal do drift, sua severidade e o
+classificador monitorado. Este trabalho propõe um experimento fatorial
+controlado, em ambiente de aprendizado em stream, para avaliar a eficácia de
+quatro estratégias de retreinamento (reset completo, janela deslizante,
+retreinamento incremental e reativação de modelos históricos), além de uma
+condição de controle sem retreinamento, sob quatro padrões temporais de
+drift, três níveis de severidade e três classificadores com mecânicas
+distintas (Naive Bayes, Random Forest e XGBoost). A severidade é
+operacionalizada por uma medida de distância de Hellinger com forma fechada,
+calculada tanto a partir das distribuições geradoras conhecidas quanto
+estimada pelo detector adotado (HDDDM), permitindo validar essa estimativa
+contra o valor real. Como desdobramento exploratório, investiga-se ainda se
+sinais observáveis do detector permitem esboçar uma orientação preliminar de
+escolha de estratégia aplicável a pipelines de MLOps, nos quais o tipo real
+de drift nunca é diretamente conhecido.
+\vspace{\onelineskip}
+    
+\noindent \textbf{Palavras-chave}: data drift. concept drift. aprendizado em
+\end{resumo}

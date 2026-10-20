@@ -1,0 +1,27 @@
+\begin{resumo}[Abstract]
+ \begin{otherlanguage*}{english}
+Machine learning models in production degrade over time due to data drift,
+a change in the underlying data distribution that silently compromises the
+validity of a trained model. While detecting this phenomenon is a
+relatively mature problem, deciding how to respond to a detected drift
+remains rarely investigated systematically, particularly regarding the
+interaction between the drift's temporal pattern, its severity, and the
+monitored classifier. This work proposes a controlled factorial experiment,
+in a stream learning setting, to evaluate the effectiveness of four
+retraining strategies (full reset, sliding window, incremental retraining,
+and historical model reactivation), plus a no-retraining control condition,
+under four temporal drift patterns, three severity levels, and three
+classifiers with distinct mechanics (Naive Bayes, Random Forest, and
+XGBoost). Severity is operationalized through a closed-form Hellinger
+distance measure, computed both from the known generating distributions and
+as estimated by the adopted detector (HDDDM), allowing this estimate to be
+validated against the true value. As an exploratory extension, the work
+also investigates whether observable signals from the detector allow
+sketching a preliminary strategy-selection guideline applicable to MLOps
+pipelines, where the true drift type is never directly known.
+   \vspace{\onelineskip}
+
+\noindent \textbf{Key-words}: data drift. concept drift. stream learning.
+model retraining. drift detection.
+ \end{otherlanguage*}
+\end{resumo}

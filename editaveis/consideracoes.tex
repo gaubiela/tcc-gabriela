@@ -1,0 +1,60 @@
+\chapter{Questões de Pesquisa}
+\label{chap:questoes}
+
+Estabelecido no capítulo anterior que a eficácia de uma estratégia de
+retreinamento depende conjuntamente do tipo e da severidade do drift
+enfrentado e do classificador monitorado, e que essa dependência raramente é
+investigada de forma sistemática, este capítulo formaliza as questões que
+orientam a investigação empírica deste trabalho.
+
+\section{Questão Principal}
+
+\begin{quote}
+\textit{Como a eficácia de diferentes estratégias de retreinamento varia em
+função do tipo e da severidade do drift enfrentado e do classificador
+monitorado, em ambiente de aprendizado em stream?}
+\end{quote}
+
+Essa questão se desdobra em três questões específicas, cada uma associada a
+uma das variáveis manipuladas no experimento fatorial.
+
+\textbf{QE1 — Tipo de drift.} A eficácia relativa das estratégias de
+retreinamento varia entre os padrões temporais de drift abrupto, gradual,
+incremental e recorrente \cite{gama2014,lu2018}? Espera-se, em particular,
+que a reativação de modelos históricos apresente vantagem específica sob
+drift recorrente, na medida em que descartar um modelo que voltará a ser
+válido representa custo evitável \cite{sun2018,li2021}.
+
+\textbf{QE2 — Severidade do drift.} A eficácia relativa das estratégias de
+retreinamento varia conforme a magnitude da mudança, independentemente do seu
+padrão temporal \cite{wang2022elastic,wang2024quadcdd}? Espera-se que
+estratégias mais radicais, como o reset completo, apresentem vantagem sob
+alta severidade, e estratégias mais conservadoras, como a janela deslizante
+ou o retreinamento incremental, sob baixa severidade.
+
+\textbf{QE3 — Classificador monitorado.} A ordenação de eficácia entre as
+estratégias de retreinamento se mantém estável entre classificadores com
+mecânicas distintas, ou a estratégia mais eficaz depende do classificador
+monitorado \cite{webb2016,wang2022dynamic}?
+
+\section{Questão Derivada}
+
+Como desdobramento exploratório, e de caráter descritivo antes que causal,
+este trabalho investiga ainda:
+
+\begin{quote}
+\textit{É possível relacionar sinais observáveis do detector adotado — como
+a magnitude da divergência calculada, utilizada como proxy de severidade, a
+velocidade com que essa divergência varia, indicativa do padrão temporal, e
+a semelhança entre a distribuição atual e distribuições históricas, indício
+de recorrência — aos padrões de eficácia identificados no experimento
+fatorial, de modo a esboçar uma orientação preliminar sobre qual estratégia
+de retreinamento adotar diante de cada condição observável?}
+\end{quote}
+
+Essa questão não pressupõe uma resposta definitiva, mas busca aproximar os
+resultados obtidos de uma forma de orientação aplicável a pipelines de
+MLOps, nos quais o monitoramento contínuo e os mecanismos de realimentação
+já são reconhecidos como componentes de primeira ordem, ainda carentes de
+critérios explícitos para a escolha da estratégia de resposta acionada após
+a detecção \cite{kreuzberger2023}.

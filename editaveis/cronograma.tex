@@ -1,0 +1,39 @@
+\section{Cronograma de Execução}
+O experimento descrito neste capítulo é executado ao longo do semestre
+2026.2, com início em 10 de agosto de 2026. A Tabela~\ref{tab:cronograma}
+apresenta a distribuição das atividades ao longo do semestre.
+ 
+\begin{table}[h]
+\centering
+\caption{Cronograma de execução do experimento — semestre 2026.2}
+\label{tab:cronograma}
+\begin{tabular}{p{2.6cm}p{9.5cm}}
+\toprule
+\textbf{Período} & \textbf{Atividade} \\
+\midrule
+10/08 -- 30/08 & Implementação do gerador de stream sintética e do módulo de
+injeção de drift (quatro padrões temporais, severidade controlada via
+Equação~\ref{eq:severidade}). \\
+31/08 -- 20/09 & Implementação do HDDDM em regime de janela deslizante e
+validação de que a severidade observada converge para a severidade real em
+condições sem ruído. \\
+21/09 -- 11/10 & Implementação e adaptação a stream dos três classificadores
+(Naive Bayes, Random Forest adaptativo, XGBoost via atualização em
+micro-lotes). \\
+12/10 -- 25/10 & Implementação das quatro estratégias de retreinamento (reset
+completo, janela deslizante, incremental, reativação de modelos
+históricos). \\
+26/10 -- 08/11 & Execução do experimento fatorial completo (144 condições,
+múltiplas repetições por condição) e coleta das métricas de avaliação. \\
+09/11 -- 15/11 & Execução do protocolo de validação da questão derivada:
+comparação entre sinais observáveis e características reais registradas em
+cada condição. \\
+16/11 -- 29/11 & Análise estatística dos resultados e redação do capítulo de
+Resultados. \\
+30/11 -- 06/12 & Redação da Discussão e Conclusão; revisão geral do
+texto. \\
+07/12 -- 13/12 & Preparação de slides e ensaio de defesa. \\
+A definir pela coordenação & Defesa do TCC2. \\
+\bottomrule
+\end{tabular}
+\end{table}
