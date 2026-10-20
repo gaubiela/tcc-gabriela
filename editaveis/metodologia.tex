@@ -1,6 +1,7 @@
 \chapter{Metodologia}
 
 \section{Questões de Pesquisa e Abordagem}
+\label{sec:questoes}
 Este capítulo descreve o desenho experimental que operacionaliza as questões
 de pesquisa que orientam este trabalho. A questão
 principal investiga como a eficácia de diferentes estratégias de
@@ -57,8 +58,21 @@ comparação que fundamenta a questão derivada.}
 \label{sec:geracao_stream}
 Cada stream é uma sequência de instâncias rotuladas, geradas a partir de uma
 distribuição base que permanece estável até o ponto de injeção do drift.
+Cada instância possui quatro atributos independentes,
+$x \sim \mathcal{N}(\mu_t, \sigma^2 I)$ com $\sigma = 1$, e o rótulo binário é
+definido por $y = \mathbb{1}[\,w^\top(x - \mu_t) + \varepsilon > 0\,]$, com
+$w = (1{,}5;\ 1;\ 1;\ 0{,}5)$ e $\varepsilon \sim \mathcal{N}(0;\ 0{,}5^2)$.
+Como a fronteira de decisão acompanha a média $\mu_t$, o deslocamento de
+$p(X)$ também altera $p(y \mid X)$, de modo que um modelo treinado antes do
+drift se degrada em proporção à severidade; a distinção entre real drift e
+virtual drift permanece, como discutido na Seção~\ref{sec:deteccao}, fora do
+alcance do detector. O drift atua apenas no subespaço formado pelos dois
+primeiros atributos, enquanto os demais permanecem estáveis. Cada stream tem
+16.000 instâncias, processadas em blocos de 400 (40 blocos); o drift tem
+início na instância 6.400, e os padrões gradual e incremental usam uma janela
+de transição de 2.400 instâncias.
 Sobre essa base, os quatro padrões temporais definidos na
-Seção~\ref{sec:severidade} são operacionalizados como segue, todos
+Seção~\ref{sec:dimensoes} são operacionalizados como segue, todos
 parametrizados pelo mesmo deslocamento padronizado $\Delta/\sigma$ associado
 ao nível de severidade da condição:
 
@@ -70,7 +84,7 @@ ao nível de severidade da condição:
   desloca linearmente de 0 a 1 ao longo da janela, de modo que $Q$ passe a
   predominar ao final da transição.
   \item \textbf{Incremental}: o deslocamento total $\Delta$ é dividido em
-  pequenos incrementos aplicados a cada bloco de instâncias ao longo da
+  pequenos incrementos, aplicados a cada 100 instâncias ao longo da
   janela de transição, de modo que a distribuição se mova continuamente de
   $P$ a $Q$ sem alternância entre estados.
   \item \textbf{Recorrente}: a distribuição alterna entre três estados
@@ -82,14 +96,24 @@ ao nível de severidade da condição:
   contenha ao menos dois candidatos distintos, os modelos treinados sob
   $Q$ e sob $R$, permitindo testar de fato a seleção do candidato mais
   próximo por distância de Hellinger, e não apenas a reativação de um único
-  modelo historicamente possível.
+  modelo historicamente possível. Cada estado dura 4.000 instâncias. Para que
+  as três transições, inclusive o retorno $R \to P$, tenham exatamente o
+  mesmo deslocamento, os três estados são posicionados nos vértices de um
+  triângulo equilátero de lado $\Delta$ no plano dos dois primeiros
+  atributos: $\mu_P = (0, 0)$, $\mu_Q = (\Delta, 0)$ e
+  $\mu_R = (\Delta/2,\ \Delta\sqrt{3}/2)$. Essa construção é necessária
+  porque, em uma única dimensão, três estados não podem ser mutuamente
+  equidistantes.
 \end{itemize}
 
 Em todos os quatro padrões, a severidade nominal da condição corresponde ao
 $\Delta/\sigma$ definido para o deslocamento completo entre estados
 consecutivos (Equação~\ref{eq:severidade}); os padrões gradual e incremental
 diferem apenas na trajetória percorrida até esse deslocamento, não no seu
-valor final. A Figura~\ref{fig:padroes_temporais} ilustra os quatro padrões
+valor final. No caso multivariado com covariância $\sigma^2 I$, a
+Equação~\ref{eq:severidade} vale com $\lVert \mu_P - \mu_Q \rVert^2$ no lugar
+de $\Delta^2$, o que mantém exata a severidade real também no padrão
+recorrente. A Figura~\ref{fig:padroes_temporais} ilustra os quatro padrões
 como séries temporais simplificadas.
 
 \begin{figure}[h]
@@ -97,9 +121,61 @@ como séries temporais simplificadas.
 \includegraphics[keepaspectratio=true,scale=0.5]{figuras/padrao_temporal.png}
 \caption{Os quatro padrões temporais de drift operacionalizados na geração
 da stream sintética, mostrando a transição entre a distribuição $P$
-(pré-drift) e $Q$ (pós-drift) ao longo do tempo.}
+(pré-drift) e $Q$ (pós-drift) ao longo do tempo. A representação é
+esquemática: no padrão recorrente, a figura mostra apenas o afastamento e o
+retorno ao estado inicial, enquanto a sequência completa
+$P \to Q \to R \to P$ é descrita no texto.}
 \label{fig:padroes_temporais}
 \end{figure}
+
+Os padrões gradual e incremental compartilham a mesma média esperada ao
+longo da transição; o que os distingue é a forma da distribuição. No
+gradual, cada instância provém inteiramente de $P$ ou de $Q$, e a
+distribuição durante a transição é uma mistura bimodal; no incremental, há
+uma única distribuição normal cujo centro se desloca continuamente
+(Figura~\ref{fig:gradual_incremental}).
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=\textwidth]{figuras/resultados/fig_gradual_vs_incremental.pdf}
+\caption{Distribuição do primeiro atributo em três momentos da transição,
+para severidade alta: o padrão gradual é uma mistura de $P$ e $Q$, enquanto o
+incremental é uma única distribuição que se desloca.}
+\label{fig:gradual_incremental}
+\end{figure}
+
+\section{Configuração do Detector e Sinais Observáveis}
+\label{sec:config_detector}
+O HDDDM é aplicado sobre os blocos de 400 instâncias, com histogramas de
+$\lfloor\sqrt{n}\rfloor = 20$ intervalos por atributo e bordas comuns às duas
+amostras comparadas. A referência acumula os blocos desde a última mudança
+detectada e é substituída pelo bloco corrente quando um drift é sinalizado,
+como no método original \cite{ditzler2011}. Para o limiar adaptativo,
+adota-se a variante baseada no desvio-padrão das variações da distância,
+$\beta = \hat{\varepsilon} + \gamma\,\hat{\sigma}$, com $\gamma = 2$: em
+ensaio preliminar, a variante baseada na estatística $t$, cujo limiar se
+estreita à medida que o histórico de variações cresce, produziu falsos
+alarmes concentrados nos blocos imediatamente anteriores ao drift, o que
+mascarava a detecção subsequente. A severidade observada é expressa na mesma
+escala da Equação~\ref{eq:severidade}: como os atributos são independentes, o
+coeficiente de Bhattacharyya entre as distribuições conjuntas fatora entre
+atributos, e $\hat{H}^2 = 1 - \prod_k \widehat{BC}_k$, em que
+$\widehat{BC}_k$ é estimado a partir dos histogramas do atributo $k$.
+
+Os três sinais observáveis da Seção~\ref{sec:sinais} são calculados por
+episódio de detecção, usando apenas informação disponível em produção: a
+referência do detector no instante da detecção e os oito blocos seguintes.
+Seja $T_j = \hat{H}^2(\text{referência}, \text{bloco}_{d+j})$, para
+$j = 0, \dots, 7$, em que $d$ é o bloco da detecção. A severidade observada
+do episódio é $S_{sev} = \operatorname{mediana}(T_5, T_6, T_7)$, o patamar da
+divergência; a velocidade é $S_{vel} = T_0 / \max_j T_j$, a fração da
+divergência final já presente no bloco da detecção, próxima de 1 em
+mudanças abruptas e menor em transições lentas; e a semelhança com
+distribuições históricas é $S_{rec}$, a menor $\hat{H}^2$ entre o patamar e
+as referências de episódios anteriores. A recorrência é sinalizada quando
+$S_{rec} < \theta$, em que $\theta$ é o percentil 99 de $\hat{H}^2$ entre
+pares de blocos de uma mesma distribuição, estimado apenas a partir de
+trechos estacionários das streams, sem uso do ground truth de severidade.
 
 \section{Classificadores e Adaptação a Stream}
 Os três classificadores descritos na Seção de Classificadores do referencial
@@ -116,6 +192,16 @@ específico; em particular, a adaptação de XGBoost a stream via lotes
 pequenos (referencial teórico, Seção de Classificadores) descreve apenas
 \emph{como} uma atualização é executada quando decidida, não uma atualização
 contínua imposta pelo classificador.
+
+Na implementação, o Naive Bayes é o modelo gaussiano, cuja atualização
+incremental acumula as estatísticas suficientes de cada classe. O Random
+Forest é inicializado com 50 árvores, e sua atualização incremental acrescenta
+25 novas árvores treinadas sobre a janela recente, sem descartar as
+anteriores; seus mecanismos internos de detecção são desativados, para que
+não concorram com o HDDDM. O XGBoost é inicializado com 50 árvores
+(profundidade máxima 4, taxa de aprendizado 0,3), e sua atualização
+incremental acrescenta 25 rodadas de boosting sobre a janela recente,
+partindo do conjunto já construído.
 
 \section{Estratégias de Retreinamento: Operacionalização}
 As quatro estratégias definidas no referencial teórico, mais a condição de
@@ -152,6 +238,17 @@ variando apenas o procedimento técnico de ajuste de parâmetros:
   efetivamente supera a ausência de adaptação.
 \end{itemize}
 
+Em todas as estratégias, a janela de instâncias mais recente corresponde ao
+último bloco (400 instâncias), e o modelo inicial é treinado sobre o primeiro
+bloco da stream. A janela deslizante retreina a cada quatro blocos. Na
+reativação, a cada detecção o modelo corrente é arquivado no repositório
+junto com a amostra sobre a qual foi treinado; a distribuição atual é
+comparada a cada amostra arquivada pela mesma $\hat{H}^2$ usada pelo
+detector, e o modelo de menor distância é reativado quando essa distância
+fica abaixo de $\theta$ (Seção~\ref{sec:config_detector}). Quando nenhum
+modelo do repositório satisfaz o limiar, ou seja, quando não há indício de
+recorrência, um novo modelo é treinado do zero, como no reset completo.
+
 \section{Desenho Experimental Fatorial}
 \label{sec:fatorial}
 O experimento cruza quatro fatores: tipo de drift (abrupto, gradual,
@@ -160,9 +257,12 @@ Seção~\ref{sec:severidade}), classificador (Naive Bayes, Random Forest,
 XGBoost) e estratégia de retreinamento (reset completo, janela deslizante,
 incremental, reativação, e a condição de controle sem retreinamento),
 totalizando 180 condições experimentais, resumidas
-na Tabela~\ref{tab:fatorial}. Cada condição é executada sob múltiplas
+na Tabela~\ref{tab:fatorial}. Cada condição é executada sob dez
 repetições com sementes aleatórias distintas, de modo a estimar a
-variabilidade da eficácia observada dentro de cada célula do fatorial.
+variabilidade da eficácia observada dentro de cada célula do fatorial,
+totalizando 1.800 execuções. Dentro de uma mesma repetição, as cinco
+estratégias e os três classificadores enfrentam exatamente a mesma stream e
+a mesma sequência de detecções, o que torna as comparações pareadas.
 
 \begin{table}[h]
 \centering
@@ -194,6 +294,29 @@ acurácia observada antes do drift, e a taxa de acionamento de cada estratégia
 ao longo da stream, usada para estimar o custo computacional relativo entre
 estratégias.
 
+Como os modelos permanecem congelados dentro de cada bloco, a acurácia
+prequential é calculada por bloco: cada bloco é primeiro usado para teste e,
+em seguida, disponibilizado com seus rótulos para a estratégia. A métrica
+principal é a acurácia média dos blocos a partir do início do drift. O tempo
+de recuperação é o número de instâncias, contado do fim da transição, até que
+a acurácia de um bloco volte a ficar a até 3 pontos percentuais da acurácia
+média pré-drift; quando isso não ocorre antes da transição seguinte ou do
+fim da stream, o valor é censurado nesse limite. A taxa de acionamento é o
+número de treinos ou reativações por bloco.
+
+\section{Análise Estatística}
+\label{sec:analise_estatistica}
+Os efeitos principais e as interações dos quatro fatores sobre a acurácia
+pós-drift são estimados por uma ANOVA fatorial completa, com o eta ao
+quadrado parcial ($\eta^2_p$) como medida de tamanho de efeito. Como a
+acurácia é limitada e a normalidade dos resíduos não é garantida, as
+estratégias são também comparadas por testes não paramétricos pareados: o
+teste de Friedman sobre os blocos definidos por tipo, severidade,
+classificador e repetição, seguido de testes de Wilcoxon par a par com
+correção de Holm. Para avaliar a robustez das conclusões a dois parâmetros
+de projeto, a cadência da janela deslizante e o parâmetro $\gamma$ do
+limiar do HDDDM, o fatorial é repetido variando cada um isoladamente.
+
 \section{Protocolo de Validação da Questão Derivada}
 Para responder à questão derivada, cada condição do experimento fatorial
 registra, além da eficácia da estratégia, os três sinais observáveis
@@ -206,6 +329,16 @@ cada sinal observável e a característica real correspondente é analisada
 condição a condição, permitindo avaliar em que medida os sinais disponíveis
 em produção, sem acesso a esse ground truth, sustentariam uma recomendação
 de estratégia equivalente à observada no experimento controlado.
+
+A orientação preliminar é avaliada por validação cruzada entre sementes:
+metade das repetições define o limiar de velocidade que separa mudanças
+abruptas das lentas, os pontos de corte que convertem $S_{sev}$ em níveis
+de severidade e a tabela que associa cada combinação de grupo de tipo,
+nível de severidade e classificador à estratégia de maior acurácia média. Na
+outra metade, cada stream é classificada apenas pelos sinais observáveis, e
+a estratégia recomendada é comparada a três referências: a escolha de um
+oráculo que conhece o tipo e a severidade reais, a prática comum de sempre
+aplicar o reset completo e a melhor estratégia em retrospecto.
 
 Esse protocolo exploratório responde diretamente às limitações de um estudo
 de base que orientou as escolhas deste trabalho. \citeonline{rocha2026}
