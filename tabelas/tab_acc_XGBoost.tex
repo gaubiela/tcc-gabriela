@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia prequential pós-drift média por condição -- XGBoost}
+\label{tab:acc-xgboost}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llccccc}
+\toprule
+Tipo & Severidade & Reset & Janela & Incremental & Reativação & Controle \\
+\midrule
+Abrupto & Baixa & 0,855 & \textbf{0,882} & 0,855 & 0,854 & 0,740 \\
+ & Média & 0,845 & \textbf{0,872} & 0,838 & 0,843 & 0,580 \\
+ & Alta & \textbf{0,877} & 0,874 & 0,869 & 0,876 & 0,555 \\
+Gradual & Baixa & 0,800 & \textbf{0,872} & 0,802 & 0,801 & 0,760 \\
+ & Média & 0,730 & \textbf{0,855} & 0,729 & 0,727 & 0,628 \\
+ & Alta & 0,794 & \textbf{0,858} & 0,795 & 0,793 & 0,603 \\
+Incremental & Baixa & 0,819 & \textbf{0,879} & 0,821 & 0,822 & 0,763 \\
+ & Média & 0,726 & \textbf{0,856} & 0,728 & 0,724 & 0,615 \\
+ & Alta & 0,711 & \textbf{0,838} & 0,714 & 0,711 & 0,575 \\
+Recorrente & Baixa & 0,854 & 0,856 & \textbf{0,859} & 0,852 & 0,788 \\
+ & Média & \textbf{0,845} & 0,823 & 0,839 & 0,844 & 0,679 \\
+ & Alta & 0,812 & \textbf{0,814} & 0,806 & 0,810 & 0,655 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Média de 10 repetições. Em negrito, a melhor estratégia de cada linha (excluído o controle).}
+\end{table}

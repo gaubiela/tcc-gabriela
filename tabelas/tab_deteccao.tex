@@ -1,0 +1,26 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Desempenho do HDDDM por tipo e severidade do drift}
+\label{tab:deteccao}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llrrrr}
+\toprule
+Tipo & Severidade & Taxa de detecção & Atraso (blocos) & Detecções/stream & Falsos alarmes pré-drift \\
+\midrule
+Abrupto & Baixa & 0,600 & 0,000 & 2,000 & 0,800 \\
+ & Média & 0,900 & 0,000 & 1,800 & 0,300 \\
+ & Alta & 1,000 & 0,000 & 2,100 & 0,400 \\
+Gradual & Baixa & 0,400 & 4,000 & 1,400 & 0,600 \\
+ & Média & 0,600 & 1,500 & 1,400 & 0,300 \\
+ & Alta & 0,900 & 0,667 & 2,500 & 0,200 \\
+Incremental & Baixa & 0,600 & 2,833 & 1,300 & 0,300 \\
+ & Média & 0,700 & 1,429 & 1,800 & 0,700 \\
+ & Alta & 0,900 & 1,889 & 1,600 & 0,200 \\
+Recorrente & Baixa & 0,667 & 0,000 & 3,500 & 0,400 \\
+ & Média & 0,900 & 0,000 & 3,500 & 0,000 \\
+ & Alta & 0,767 & 0,000 & 3,500 & 0,300 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}

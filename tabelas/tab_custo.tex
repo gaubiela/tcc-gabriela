@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Custo e recuperação por estratégia (média sobre todas as condições)}
+\label{tab:custo}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrr}
+\toprule
+Estratégia & Acion./bloco & Treinos & Reativações & Treino (s) & Recuperação (inst.) & Recuperou (\%) \\
+\midrule
+Reset completo & 0,056 & 2,2 & 0,0 & 0,064 & 2.688 & 67,9 \\
+Janela deslizante & 0,231 & 9,0 & 0,0 & 0,261 & 653 & 100,0 \\
+Incremental & 0,056 & 2,2 & 0,0 & 0,036 & 5.264 & 32,0 \\
+Reativação & 0,056 & 1,2 & 1,0 & 0,035 & 2.700 & 67,5 \\
+Sem retreinamento & 0,000 & 0,0 & 0,0 & 0,000 & 6.667 & 8,3 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Recuperação: instâncias após o fim da transição até a acurácia do bloco voltar a até 3 p.p. da acurácia pré-drift (censurada no fim do segmento).}
+\end{table}

@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Comparações par a par entre estratégias (teste de Wilcoxon pareado, correção de Holm)}
+\label{tab:wilcoxon}
+\begin{tabular}{llrr}
+\toprule
+Estratégia A & Estratégia B & Mediana (A $-$ B) & $p$ (Holm) \\
+\midrule
+Reset completo & Janela deslizante & -0,013 & $<$ 0,001 \\
+Reset completo & Incremental & 0,027 & $<$ 0,001 \\
+Reset completo & Reativação & 0,000 & 0,107 \\
+Reset completo & Sem retreinamento & 0,130 & $<$ 0,001 \\
+Janela deslizante & Incremental & 0,104 & $<$ 0,001 \\
+Janela deslizante & Reativação & 0,015 & $<$ 0,001 \\
+Janela deslizante & Sem retreinamento & 0,196 & $<$ 0,001 \\
+Incremental & Reativação & -0,025 & $<$ 0,001 \\
+Incremental & Sem retreinamento & 0,067 & $<$ 0,001 \\
+Reativação & Sem retreinamento & 0,130 & $<$ 0,001 \\
+\bottomrule
+\end{tabular}
+\par\vspace{2pt}{\footnotesize Friedman: $\chi^2$ = 830,5, $p$ $<$ 0,001; n = 360 blocos pareados.}
+\end{table}

@@ -1,0 +1,21 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Sensibilidade da acurácia pós-drift média à cadência da janela deslizante e ao limiar do HDDDM}
+\label{tab:sensibilidade}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{ccrrrrrr}
+\toprule
+Cadência $K$ & $\gamma$ & Reset & Janela & Incremental & Reativação & Controle & Acion. janela \\
+\midrule
+2 & 2,0 & 0,804 & 0,875 & 0,748 & 0,803 & 0,653 & 0,487 \\
+4 & 1,5 & 0,824 & 0,860 & 0,762 & 0,823 & 0,653 & 0,231 \\
+4 & 2,0 & 0,804 & 0,860 & 0,748 & 0,803 & 0,653 & 0,231 \\
+4 & 2,5 & 0,794 & 0,860 & 0,740 & 0,793 & 0,653 & 0,231 \\
+8 & 2,0 & 0,804 & 0,833 & 0,748 & 0,803 & 0,653 & 0,103 \\
+16 & 2,0 & 0,804 & 0,792 & 0,748 & 0,803 & 0,653 & 0,051 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize 5 repetições por condição; configuração principal: $K$ = 4, $\gamma$ = 2,0.}
+\end{table}

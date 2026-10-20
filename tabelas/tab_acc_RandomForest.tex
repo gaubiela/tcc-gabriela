@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia prequential pós-drift média por condição -- RandomForest}
+\label{tab:acc-randomforest}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llccccc}
+\toprule
+Tipo & Severidade & Reset & Janela & Incremental & Reativação & Controle \\
+\midrule
+Abrupto & Baixa & 0,852 & \textbf{0,877} & 0,786 & 0,852 & 0,744 \\
+ & Média & 0,838 & \textbf{0,866} & 0,664 & 0,835 & 0,582 \\
+ & Alta & \textbf{0,871} & 0,869 & 0,635 & 0,871 & 0,549 \\
+Gradual & Baixa & 0,797 & \textbf{0,869} & 0,772 & 0,798 & 0,759 \\
+ & Média & 0,729 & \textbf{0,854} & 0,663 & 0,727 & 0,624 \\
+ & Alta & 0,789 & \textbf{0,855} & 0,663 & 0,788 & 0,592 \\
+Incremental & Baixa & 0,817 & \textbf{0,875} & 0,777 & 0,820 & 0,762 \\
+ & Média & 0,719 & \textbf{0,852} & 0,630 & 0,720 & 0,615 \\
+ & Alta & 0,707 & \textbf{0,835} & 0,581 & 0,707 & 0,566 \\
+Recorrente & Baixa & 0,849 & \textbf{0,852} & 0,824 & 0,846 & 0,787 \\
+ & Média & \textbf{0,842} & 0,818 & 0,718 & 0,839 & 0,676 \\
+ & Alta & 0,803 & \textbf{0,809} & 0,665 & 0,804 & 0,650 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Média de 10 repetições. Em negrito, a melhor estratégia de cada linha (excluído o controle).}
+\end{table}

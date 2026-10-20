@@ -1,0 +1,31 @@
+{
+  "N_REPS": 10,
+  "theta_rec": 0.0733563149692343,
+  "tau_v": 0.8200000000000001,
+  "cortes_sev": [
+    0.2710392824968852,
+    0.5536967546401504
+  ],
+  "anova_R2": 0.7593816069474786,
+  "friedman_chi2": 830.4707097535784,
+  "friedman_p": 1.9271505892083973e-178,
+  "ranks": {
+    "reset": 2.43,
+    "janela": 1.75,
+    "incremental": 3.58,
+    "reativacao": 2.51,
+    "controle": 4.72
+  },
+  "spearman_sev": 0.8973384074100478,
+  "mae_sev": 0.030798564445050698,
+  "auc_vel": 0.9743260590500642,
+  "rec_precisao": 1.0,
+  "rec_revocacao": 1.0,
+  "politicas": {
+    "sinais observáveis (proposta)": 0.8525590277777778,
+    "oráculo (tipo e severidade reais)": 0.8622947668650793,
+    "sempre reset": 0.8165062003968254,
+    "sem retreinamento": 0.6575966021825397,
+    "melhor em retrospecto": 0.8687010168650795
+  }
+}

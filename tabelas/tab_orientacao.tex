@@ -1,0 +1,17 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia das políticas de escolha de estratégia nas repetições de teste}
+\label{tab:orientacao}
+\begin{tabular}{lrr}
+\toprule
+Política & Acurácia pós-drift & Perda vs. retrospecto \\
+\midrule
+Sinais observáveis (proposta) & 0,853 & 0,016 \\
+Oráculo (tipo e severidade reais) & 0,862 & 0,006 \\
+Sempre reset & 0,817 & 0,052 \\
+Sem retreinamento & 0,658 & 0,211 \\
+Melhor em retrospecto & 0,869 & 0,000 \\
+\bottomrule
+\end{tabular}
+\end{table}
