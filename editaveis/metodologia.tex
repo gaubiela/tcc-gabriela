@@ -152,11 +152,15 @@ amostras comparadas. A referência acumula os blocos desde a última mudança
 detectada e é substituída pelo bloco corrente quando um drift é sinalizado,
 como no método original \cite{ditzler2011}. Para o limiar adaptativo,
 adota-se a variante baseada no desvio-padrão das variações da distância,
-$\beta = \hat{\varepsilon} + \gamma\,\hat{\sigma}$, com $\gamma = 2$: em
-ensaio preliminar, a variante baseada na estatística $t$, cujo limiar se
-estreita à medida que o histórico de variações cresce, produziu falsos
-alarmes concentrados nos blocos imediatamente anteriores ao drift, o que
-mascarava a detecção subsequente. A severidade observada é expressa na mesma
+$\beta = \hat{\varepsilon} + \gamma\,\hat{\sigma}$, uma das duas
+variantes propostas pelos autores, com $\gamma = 2$, valor dentro da faixa
+por eles avaliada (de 0,5 a 2). Em ensaio preliminar, a outra variante,
+baseada na estatística $t$, cujo limiar se estreita à medida que o histórico
+de variações cresce, produziu uma taxa de falsos alarmes antes do drift
+maior (0,033 contra 0,020 por bloco) e detectou menos transições abruptas
+(73\% contra 90\%). Como o valor de $\gamma$ é uma escolha de projeto, a
+análise de sensibilidade (Seção~\ref{sec:analise_estatistica}) repete o
+experimento com $\gamma = 1{,}5$ e $\gamma = 2{,}5$. A severidade observada é expressa na mesma
 escala da Equação~\ref{eq:severidade}: como os atributos são independentes, o
 coeficiente de Bhattacharyya entre as distribuições conjuntas fatora entre
 atributos, e $\hat{H}^2 = 1 - \prod_k \widehat{BC}_k$, em que
@@ -182,8 +186,9 @@ Os três classificadores descritos na Seção de Classificadores do referencial
 teórico permanecem, entre atualizações, congelados no estado em que foram
 treinados pela última vez; nenhum deles se atualiza continuamente por
 exigência própria. O Naive Bayes atualiza contadores de forma nativa e
-imediata; o Random Forest, na variante adaptativa discutida por
-\citeonline{gomes2017}, mantém um conjunto de árvores substituíveis; o
+imediata; o Random Forest, inspirado nas variantes adaptativas discutidas por
+\citeonline{gomes2017}, mantém um conjunto de árvores ao qual novas árvores
+podem ser acrescentadas; o
 XGBoost mantém o conjunto de árvores já construído e só o modifica quando
 uma estratégia de retreinamento é efetivamente acionada. Essa uniformidade é
 deliberada: ela garante que a variável manipulada seja a estratégia de
@@ -197,8 +202,10 @@ Na implementação, o Naive Bayes é o modelo gaussiano, cuja atualização
 incremental acumula as estatísticas suficientes de cada classe. O Random
 Forest é inicializado com 50 árvores, e sua atualização incremental acrescenta
 25 novas árvores treinadas sobre a janela recente, sem descartar as
-anteriores; seus mecanismos internos de detecção são desativados, para que
-não concorram com o HDDDM. O XGBoost é inicializado com 50 árvores
+anteriores, e a predição é a média das probabilidades ponderada pelo número
+de árvores de cada grupo. Diferentemente das variantes adaptativas de
+\citeonline{gomes2017}, a implementação não inclui detectores internos de
+drift por árvore, para que nenhum mecanismo concorra com o HDDDM. O XGBoost é inicializado com 50 árvores
 (profundidade máxima 4, taxa de aprendizado 0,3), e sua atualização
 incremental acrescenta 25 rodadas de boosting sobre a janela recente,
 partindo do conjunto já construído.
@@ -240,7 +247,10 @@ variando apenas o procedimento técnico de ajuste de parâmetros:
 
 Em todas as estratégias, a janela de instâncias mais recente corresponde ao
 último bloco (400 instâncias), e o modelo inicial é treinado sobre o primeiro
-bloco da stream. A janela deslizante retreina a cada quatro blocos. Na
+bloco da stream. A janela deslizante retreina a cada quatro blocos; a fase
+dessa agenda é sorteada para cada stream, pois, como o drift começa em um
+bloco múltiplo de quatro, uma agenda fixa faria a janela retreinar sempre
+exatamente no primeiro bloco do drift, o que a favoreceria artificialmente. Na
 reativação, a cada detecção o modelo corrente é arquivado no repositório
 junto com a amostra sobre a qual foi treinado; a distribuição atual é
 comparada a cada amostra arquivada pela mesma $\hat{H}^2$ usada pelo
@@ -288,7 +298,7 @@ incremental, reativação de modelos históricos, sem retreinamento
 A eficácia de cada estratégia é avaliada por acurácia prequential, o
 protocolo de teste-então-treino recomendado por \citeonline{gama2014} para
 avaliação em stream, que preserva a ordem temporal das instâncias, calculada
-em janela deslizante antes e depois do ponto de injeção do drift. Complementam
+separadamente antes e depois do ponto de injeção do drift. Complementam
 essa métrica principal o tempo, em número de instâncias, até a recuperação da
 acurácia observada antes do drift, e a taxa de acionamento de cada estratégia
 ao longo da stream, usada para estimar o custo computacional relativo entre
@@ -306,14 +316,24 @@ número de treinos ou reativações por bloco.
 
 \section{Análise Estatística}
 \label{sec:analise_estatistica}
-Os efeitos principais e as interações dos quatro fatores sobre a acurácia
-pós-drift são estimados por uma ANOVA fatorial completa, com o eta ao
-quadrado parcial ($\eta^2_p$) como medida de tamanho de efeito. Como a
-acurácia é limitada e a normalidade dos resíduos não é garantida, as
-estratégias são também comparadas por testes não paramétricos pareados: o
-teste de Friedman sobre os blocos definidos por tipo, severidade,
-classificador e repetição, seguido de testes de Wilcoxon par a par com
-correção de Holm. Para avaliar a robustez das conclusões a dois parâmetros
+Como as quinze execuções de uma mesma repetição (cinco estratégias e três
+classificadores) compartilham a mesma stream, elas não são observações
+independentes. Os efeitos dos fatores sobre a acurácia pós-drift são, por
+isso, estimados por uma ANOVA em parcelas subdivididas: tipo e severidade,
+que variam entre streams, são testados contra a variação entre as 120
+streams; classificador, estratégia e todas as suas interações, que variam
+dentro de cada stream, são testados contra a variação residual dentro das
+streams. O eta ao quadrado parcial ($\eta^2_p$) é usado como medida de
+tamanho de efeito. Como a acurácia é limitada e a normalidade dos resíduos
+não é garantida, as estratégias são também comparadas por testes não
+paramétricos pareados, tomando cada stream como bloco: o teste de Friedman,
+seguido de testes de Wilcoxon par a par com correção de Holm.
+
+Como as estratégias reativas dependem das detecções do HDDDM, uma análise
+complementar separa o efeito da estratégia do efeito do detector: o reset
+completo, o retreinamento incremental e a reativação são executados também
+com um detector ideal, que aciona a estratégia uma única vez, no primeiro
+bloco após o fim de cada transição verdadeira. Para avaliar a robustez das conclusões a dois parâmetros
 de projeto, a cadência da janela deslizante e o parâmetro $\gamma$ do
 limiar do HDDDM, o fatorial é repetido variando cada um isoladamente.
 
@@ -336,9 +356,15 @@ abruptas das lentas, os pontos de corte que convertem $S_{sev}$ em níveis
 de severidade e a tabela que associa cada combinação de grupo de tipo,
 nível de severidade e classificador à estratégia de maior acurácia média. Na
 outra metade, cada stream é classificada apenas pelos sinais observáveis, e
-a estratégia recomendada é comparada a três referências: a escolha de um
+a estratégia recomendada é comparada a quatro referências: a escolha de um
 oráculo que conhece o tipo e a severidade reais, a prática comum de sempre
-aplicar o reset completo e a melhor estratégia em retrospecto.
+aplicar o reset completo, a política fixa de sempre aplicar a janela
+deslizante e a melhor estratégia em retrospecto. Streams nas quais o
+detector não produz nenhum episódio recebem a estratégia de maior acurácia
+média no treino. Como a classificação de cada stream usa os sinais de todos
+os seus episódios, essa avaliação mede a qualidade do mapeamento entre
+sinais e estratégias, e não a de uma política online que trocaria de
+estratégia a cada episódio.
 
 Esse protocolo exploratório responde diretamente às limitações de um estudo
 de base que orientou as escolhas deste trabalho. \citeonline{rocha2026}

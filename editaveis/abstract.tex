@@ -1,24 +1,31 @@
 \begin{resumo}[Abstract]
  \begin{otherlanguage*}{english}
 Machine learning models in production degrade over time due to data drift,
-a change in the underlying data distribution that silently compromises the
-validity of a trained model. While detecting this phenomenon is a
-relatively mature problem, deciding how to respond to a detected drift
-remains rarely investigated systematically, particularly regarding the
-interaction between the drift's temporal pattern, its severity, and the
-monitored classifier. This work proposes a controlled factorial experiment,
-in a stream learning setting, to evaluate the effectiveness of four
-retraining strategies (full reset, sliding window, incremental retraining,
-and historical model reactivation), plus a no-retraining control condition,
+a change in the data distribution that silently compromises the validity of
+a trained model. While detecting this phenomenon is a relatively mature
+problem, deciding how to respond to a detected drift remains rarely
+investigated systematically. This work evaluates, through a controlled
+factorial experiment in a stream learning setting, the effectiveness of
+four retraining strategies (full reset, sliding window, incremental
+retraining, and historical model reactivation) and a no-retraining control,
 under four temporal drift patterns, three severity levels, and three
-classifiers with distinct mechanics (Naive Bayes, Random Forest, and
-XGBoost). Severity is operationalized through a closed-form Hellinger
-distance measure, computed both from the known generating distributions and
-as estimated by the adopted detector (HDDDM), allowing this estimate to be
-validated against the true value. As an exploratory extension, the work
-also investigates whether observable signals from the detector allow
-sketching a preliminary strategy-selection guideline applicable to MLOps
-pipelines, where the true drift type is never directly known.
+classifiers (Naive Bayes, Random Forest, and XGBoost), in 180 conditions and
+1,800 runs. Severity is operationalized through the Hellinger distance,
+exact for the generating distributions and estimated by the adopted
+detector (HDDDM). Drift type, severity, and classifier all interacted
+significantly with the strategy, but what most distinguished the strategies
+was how they are triggered: the sliding window was the most effective
+strategy in 29 of the 36 combinations, with a large advantage under gradual
+and incremental drift, where the detector signals the change in the middle
+of the transition and detection-triggered strategies retrain too early, at
+the cost of about four times as many retraining runs. Full reset was the
+best strategy under high-severity abrupt drift, reactivation matched full
+reset at a lower cost, and the effectiveness of incremental retraining
+depended on the classifier. As an exploratory extension, the detector's
+observable signals estimated the drift's severity (Spearman correlation of
+0.90), speed (AUC of 0.97), and recurrence well; a guideline built from them
+outperformed always applying full reset, but not a fixed policy of always
+using the sliding window.
    \vspace{\onelineskip}
 
 \noindent \textbf{Key-words}: data drift. concept drift. stream learning.

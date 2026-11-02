@@ -1,0 +1,176 @@
+\chapter{Discussão}
+\label{chap:discussao}
+
+\section{Resposta à Questão Principal}
+
+A questão principal deste trabalho pergunta como a eficácia das estratégias
+de retreinamento varia em função do tipo e da severidade do drift e do
+classificador monitorado. Os resultados indicam que as três variáveis
+importam: as interações da estratégia com o tipo, com a severidade e com o
+classificador foram todas significativas e com efeitos de magnitude
+relevante (Tabela~\ref{tab:anova}). Essas interações, no entanto, alteraram
+menos a ordenação entre as estratégias do que a distância entre elas. Na
+maior parte das condições, a janela deslizante foi a estratégia mais eficaz,
+e as variáveis do drift determinaram sobretudo quanto as estratégias
+acionadas por detecção ficaram atrás dela.
+
+O fator que melhor explica esse padrão é a política de acionamento, e não o
+procedimento de ajuste do modelo. A janela deslizante e o reset completo
+treinam o modelo exatamente da mesma forma e diferem apenas em quando o
+fazem (Seção~\ref{sec:estrategias}). Sob drift abrupto, em que o HDDDM
+detecta a mudança no próprio bloco em que ela ocorre, as duas estratégias
+praticamente empataram. Sob drift gradual e incremental, o detector dispara
+no meio da transição e, na maioria das vezes, uma única vez; o reset produz
+então um modelo ajustado a uma distribuição intermediária, que permanece em
+uso depois que a transição termina. A análise com detector ideal
+(Tabela~\ref{tab:detector-ideal}) confirma essa leitura: quando acionado no
+momento certo, o reset superou a janela nos padrões abrupto e recorrente,
+mas continuou atrás dela nos padrões lentos, porque nenhuma estratégia que
+atua uma única vez acompanha uma distribuição que continua a se deslocar.
+
+Esse resultado qualifica a premissa, comum na literatura, de que a
+adaptação informada por detecção é preferível à adaptação cega
+\cite{gama2014}. Nas condições estudadas, a adaptação cega foi mais robusta
+porque não depende de o detector perceber cada etapa da mudança. Essa
+robustez, porém, não é gratuita nem incondicional: a janela retreinou cerca
+de quatro vezes mais que o reset (Tabela~\ref{tab:custo}), e a análise de
+sensibilidade mostrou que, com cadência de dezesseis blocos, ela perdeu para
+o reset (Tabela~\ref{tab:sensibilidade}). A conclusão mais precisa é,
+portanto, que uma janela com cadência suficientemente frequente em relação à
+duração das transições supera estratégias acionadas por um detector que
+dispara uma única vez por mudança, ao custo de mais retreinamentos.
+
+\subsection{Tipo de drift}
+
+Para o drift recorrente, a literatura sugere que reaproveitar modelos
+históricos é mais eficiente que retreinar do zero \cite{sun2018,li2021}. O
+mecanismo de recorrência funcionou como esperado: o repositório identificou
+o modelo correto em todos os retornos detectados. Ainda assim, a reativação
+não superou o reset em acurácia. A explicação está na construção do
+experimento: todo modelo é treinado sobre um único bloco de 400 instâncias,
+e um modelo antigo treinado sobre um bloco de $P$ não é melhor do que um
+modelo novo treinado sobre outro bloco de $P$. A vantagem da reativação
+aparece no custo, já que ela evita treinos (1,2 treinos por stream, contra
+2,2 do reset), e deveria aparecer também em acurácia em cenários nos quais o
+modelo histórico tenha sido treinado com muito mais dados do que os
+disponíveis logo após a mudança, ou nos quais os rótulos cheguem com atraso,
+situação em que \citeonline{rahmani2023} mostram que a disponibilidade de
+rótulos condiciona o desempenho do retreinamento. Essa interpretação é uma
+hipótese a ser testada, e não um resultado deste trabalho.
+
+\subsection{Severidade}
+
+A severidade foi o segundo fator de maior efeito e interagiu com a
+estratégia, em concordância com a observação de \citeonline{wang2022elastic}
+de que a magnitude do drift condiciona a readaptação do modelo. Seu efeito
+mais visível foi ampliar o ganho de todas as estratégias sobre o controle e
+a desvantagem do retreinamento incremental, cujo modelo preserva um
+conhecimento tanto mais prejudicial quanto maior o deslocamento. O
+reset completo só superou a janela em combinações de severidade alta ou média
+com mudanças abruptas, nas quais descartar o modelo antigo de uma só vez é
+precisamente o que a situação exige. Não se observou, por outro lado, uma
+vantagem de estratégias conservadoras sob severidade baixa: o incremental
+foi pior que o reset também nesse nível.
+
+\subsection{Classificador}
+
+A interação entre classificador e estratégia decorreu quase inteiramente do
+retreinamento incremental, cuja eficácia dependeu de como cada classificador
+incorpora dados novos. No XGBoost, as novas rodadas de boosting são
+treinadas para corrigir os erros do conjunto existente sobre os dados
+recentes, o que tornou o incremental equivalente ao reset. No Random Forest,
+as árvores novas são minoria diante das árvores treinadas antes do drift, e
+a média das predições permanece dominada pelo conceito antigo. No Naive
+Bayes, as estatísticas acumuladas misturam as duas distribuições. Esse
+resultado reforça, em um desenho controlado, a observação de
+\citeonline{webb2016} e \citeonline{wang2022dynamic} de que um mesmo
+mecanismo de adaptação produz efeitos distintos em classificadores
+distintos: a escolha entre atualizar e substituir um modelo não pode ser
+feita independentemente do classificador em uso.
+
+\section{Resposta à Questão Derivada}
+
+A questão derivada pergunta se sinais observáveis do detector permitem
+esboçar uma orientação de escolha de estratégia. A resposta tem duas partes.
+Os três sinais mostraram-se informativos: a severidade observada acompanhou
+a severidade real, a velocidade da divergência separou mudanças abruptas de
+lentas, e a distância ao repositório identificou todas as recorrências
+detectadas. Esses resultados sustentam, em ambiente controlado, a proposta
+de usar a própria estatística do detector como aproximação da severidade
+\cite{komorniczak2022} e indicam que parte do entendimento do drift, o
+componente que \citeonline{lu2018} apontam como o menos desenvolvido da
+área, pode ser extraída de um detector baseado em distribuição sem rótulos.
+
+A orientação construída a partir desses sinais, porém, não superou a
+política fixa de sempre usar a janela deslizante. Isso não decorre de os
+sinais serem pouco confiáveis, mas de a janela ter sido a melhor estratégia
+em quase todas as condições: quando uma única estratégia domina, conhecer o
+tipo e a severidade do drift acrescenta pouco à decisão, e até o oráculo,
+que conhece ambos, superou a janela fixa por apenas 0,002. Os sinais tendem
+a ser mais úteis quando o custo também entra na decisão. Nas condições em
+que o reset empata com a janela, como o drift abrupto e o recorrente, os
+sinais permitiriam optar por uma estratégia com cerca de um quarto dos
+retreinamentos, sem perda relevante de acurácia; nas transições lentas,
+indicariam que a janela compensa seu custo adicional. Uma orientação
+sensível ao custo, e não apenas à acurácia, é o desdobramento mais direto
+deste resultado.
+
+\section{Implicações para Pipelines de MLOps}
+
+Três implicações práticas decorrem dos resultados, ressalvados os limites
+discutidos na seção seguinte. A primeira é que acionar o retreinamento
+apenas pelo detector é arriscado quando a mudança é lenta: um pipeline que
+dispara um único retreinamento por detecção tende a produzir um modelo
+ajustado a uma distribuição de transição. Combinar o acionamento por
+detecção com retreinamentos agendados, ou continuar retreinando após uma
+detecção até que a divergência se estabilize, são alternativas que os
+resultados com detector ideal e com a janela deslizante sugerem. A segunda é
+que a escolha entre atualizar e substituir um modelo deve considerar o
+classificador, já que a atualização incremental foi adequada para o XGBoost
+e inadequada para o Random Forest. A terceira é que a estatística do
+detector, já calculada para fins de monitoramento, carrega informação útil
+sobre a severidade, a velocidade e a recorrência do drift, e pode ser
+registrada junto com cada alerta a custo praticamente nulo, oferecendo aos
+critérios de resposta que \citeonline{kreuzberger2023} apontam como ausentes
+nos pipelines atuais uma base observável.
+
+\section{Ameaças à Validade}
+\label{sec:ameacas}
+
+\textbf{Validade externa.} Os dados são sintéticos: quatro atributos
+gaussianos independentes, classe binária equilibrada, drift aplicado sempre
+a dois atributos e transições de duração fixa. A independência entre
+atributos é também o que permite expressar a severidade observada como
+$1 - \prod_k \widehat{BC}_k$. Os resultados não se transferem
+automaticamente para dados reais, com atributos correlacionados, desbalanço
+de classes e transições de duração variável; o estudo de base
+\cite{rocha2026}, por exemplo, usa conjuntos de dados reais e sintéticos de
+referência que não foram considerados aqui. Além disso, um único detector
+foi avaliado, e outros detectores podem disparar de forma diferente nas
+transições lentas.
+
+\textbf{Validade interna.} Várias escolhas de projeto afetam os resultados:
+o tamanho do bloco, o uso de um único bloco como janela de treino, a cadência
+da janela deslizante e o parâmetro $\gamma$ do HDDDM. As duas últimas foram
+avaliadas na análise de sensibilidade, que mostrou que a vantagem da janela
+depende da cadência. A agenda da janela teve fase sorteada por stream para
+evitar que coincidisse com o início do drift. Como o drift começa sempre no
+início de um bloco, a latência de detecção nula observada nos padrões abrupto
+e recorrente é otimista em relação a um cenário em que a mudança ocorre no
+meio de um bloco.
+
+\textbf{Validade de construto.} No gerador adotado, o deslocamento de $p(X)$
+é sempre acompanhado de uma mudança em $p(y \mid X)$, de modo que cada drift
+combina componentes reais e virtuais, e o experimento não permite separar o
+efeito de cada componente. A eficácia foi medida por acurácia, adequada a
+classes equilibradas, e o critério de recuperação (3 pontos percentuais da
+acurácia pré-drift) é uma convenção; por isso, o tempo de recuperação é
+apresentado junto com a fração de transições recuperadas.
+
+\textbf{Validade de conclusão.} As quinze execuções de cada repetição
+compartilham a mesma stream, o que foi tratado com uma ANOVA em parcelas
+subdivididas e com testes pareados por stream. A avaliação da orientação
+preliminar usou 60 streams de teste e classifica cada stream a partir de
+todos os seus episódios, o que a torna uma avaliação retrospectiva do
+mapeamento entre sinais e estratégias, e não de uma política executada em
+tempo real.

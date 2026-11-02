@@ -103,7 +103,7 @@ uma pode assumir.
 \centering
 \caption{Dimensões de caracterização do drift}
 \label{tab:dimensoes}
-\begin{tabular}{p{2.6cm}p{3.8cm}p{6.2cm}}
+\begin{tabular}{p{2.6cm}p{3.8cm}p{5.8cm}}
 \toprule
 \textbf{Dimensão} & \textbf{Valores possíveis} & \textbf{Descrição} \\
 \midrule
@@ -167,9 +167,10 @@ detecção de \citeonline{lu2018} assume, em seu primeiro estágio, a obtenção
 blocos de dados diretamente a partir de streams, e \citeonline{komorniczak2022}
 demonstram viabilidade técnica equivalente para essa família de métodos sob a
 denominação explícita de processamento em lote de data streams. Este trabalho
-adota, portanto, o mesmo regime de janela deslizante: a cada novo bloco de
-instâncias, a divergência entre a janela de referência e a janela mais
-recente é recalculada, e o limiar adaptativo original do método é preservado.
+adota, portanto, o mesmo processamento em blocos: a cada novo bloco de
+instâncias, a divergência entre a referência, que acumula os blocos
+observados desde a última mudança, e o bloco mais recente é recalculada, e o
+limiar adaptativo original do método é preservado.
 
 Essa escolha, no entanto, tem um custo teórico direto: por operar
 exclusivamente sobre $p(X)$, o detector não distingue real drift de virtual
@@ -292,7 +293,7 @@ recorrente, mantém um repositório de modelos previamente descartados,
 associados cada um à distribuição sob a qual foram treinados, e reativa o
 candidato mais próximo da distribuição atual quando um sinal de recorrência
 é identificado. Esse sinal é definido pela mesma distância de Hellinger
-usada pelo detector: a cada novo bloco, a distribuição atual é comparada
+usada pelo detector: a cada detecção, a distribuição atual é comparada
 contra a de cada modelo do repositório, e a recorrência é sinalizada quando
 a menor distância obtida cai abaixo de um limiar fixo; o modelo
 correspondente a essa menor distância é o reativado. Complementa esse
