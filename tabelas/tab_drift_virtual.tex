@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift média sob drift puramente virtual}
+\label{tab:drift-virtual}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Tipo & Reset & Janela & Incremental & Reativação & Controle & Pré-drift & Detecções \\
+\midrule
+Abrupto & 0,886 & 0,887 & 0,880 & 0,886 & 0,815 & 0,891 & 2,0 \\
+Gradual & 0,875 & 0,885 & 0,879 & 0,876 & 0,824 & 0,892 & 1,9 \\
+Incremental & 0,856 & 0,887 & 0,860 & 0,859 & 0,827 & 0,892 & 1,7 \\
+Recorrente & 0,878 & 0,877 & 0,884 & 0,874 & 0,845 & 0,892 & 3,6 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Médias sobre severidades, classificadores e 10 repetições. Detecções: média por stream. Friedman: $\chi^2$ = 198,7, $p$ $<$ 0,001.}
+\end{table}

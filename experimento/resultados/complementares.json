@@ -1,0 +1,222 @@
+{
+ "janela_treino": [
+  {
+   "w_treino": 1,
+   "tipo": "abrupto",
+   "reset": 0.8601,
+   "janela": 0.869,
+   "incremental": 0.7785,
+   "reativacao": 0.8599,
+   "controle": 0.618
+  },
+  {
+   "w_treino": 1,
+   "tipo": "gradual",
+   "reset": 0.771,
+   "janela": 0.8642,
+   "incremental": 0.7321,
+   "reativacao": 0.7706,
+   "controle": 0.6537
+  },
+  {
+   "w_treino": 1,
+   "tipo": "incremental",
+   "reset": 0.7475,
+   "janela": 0.8613,
+   "incremental": 0.7038,
+   "reativacao": 0.7482,
+   "controle": 0.6435
+  },
+  {
+   "w_treino": 1,
+   "tipo": "recorrente",
+   "reset": 0.841,
+   "janela": 0.8438,
+   "incremental": 0.7816,
+   "reativacao": 0.8382,
+   "controle": 0.7047
+  },
+  {
+   "w_treino": 4,
+   "tipo": "abrupto",
+   "reset": 0.7788,
+   "janela": 0.87,
+   "incremental": 0.7785,
+   "reativacao": 0.7801,
+   "controle": 0.618
+  },
+  {
+   "w_treino": 4,
+   "tipo": "gradual",
+   "reset": 0.7625,
+   "janela": 0.8704,
+   "incremental": 0.7321,
+   "reativacao": 0.7599,
+   "controle": 0.6537
+  },
+  {
+   "w_treino": 4,
+   "tipo": "incremental",
+   "reset": 0.7267,
+   "janela": 0.858,
+   "incremental": 0.7038,
+   "reativacao": 0.7264,
+   "controle": 0.6435
+  },
+  {
+   "w_treino": 4,
+   "tipo": "recorrente",
+   "reset": 0.7743,
+   "janela": 0.8359,
+   "incremental": 0.7816,
+   "reativacao": 0.808,
+   "controle": 0.7047
+  },
+  {
+   "w_treino": 8,
+   "tipo": "abrupto",
+   "reset": 0.7428,
+   "janela": 0.8573,
+   "incremental": 0.7785,
+   "reativacao": 0.7433,
+   "controle": 0.618
+  },
+  {
+   "w_treino": 8,
+   "tipo": "gradual",
+   "reset": 0.746,
+   "janela": 0.8581,
+   "incremental": 0.7321,
+   "reativacao": 0.7435,
+   "controle": 0.6537
+  },
+  {
+   "w_treino": 8,
+   "tipo": "incremental",
+   "reset": 0.707,
+   "janela": 0.844,
+   "incremental": 0.7038,
+   "reativacao": 0.7062,
+   "controle": 0.6435
+  },
+  {
+   "w_treino": 8,
+   "tipo": "recorrente",
+   "reset": 0.7502,
+   "janela": 0.8109,
+   "incremental": 0.7816,
+   "reativacao": 0.7971,
+   "controle": 0.7047
+  }
+ ],
+ "recorrente_reativ_menos_reset": {
+  "1": {
+   "dif": -0.0028472222222222184,
+   "p": 0.01638858159861881
+  },
+  "4": {
+   "dif": 0.03365648148148147,
+   "p": 1.1448236379586384e-12
+  },
+  "8": {
+   "dif": 0.04683703703703705,
+   "p": 1.753278834311801e-13
+  }
+ },
+ "drift_virtual": [
+  {
+   "tipo": "abrupto",
+   "reset": 0.8856,
+   "janela": 0.8869,
+   "incremental": 0.8802,
+   "reativacao": 0.8857,
+   "controle": 0.8155,
+   "acc_pre": 0.8905,
+   "deteccoes": 2.0333
+  },
+  {
+   "tipo": "gradual",
+   "reset": 0.8751,
+   "janela": 0.8848,
+   "incremental": 0.8789,
+   "reativacao": 0.8756,
+   "controle": 0.8241,
+   "acc_pre": 0.8916,
+   "deteccoes": 1.9
+  },
+  {
+   "tipo": "incremental",
+   "reset": 0.8561,
+   "janela": 0.8872,
+   "incremental": 0.8596,
+   "reativacao": 0.8593,
+   "controle": 0.8272,
+   "acc_pre": 0.8915,
+   "deteccoes": 1.6667
+  },
+  {
+   "tipo": "recorrente",
+   "reset": 0.8779,
+   "janela": 0.8771,
+   "incremental": 0.8838,
+   "reativacao": 0.8736,
+   "controle": 0.8449,
+   "acc_pre": 0.8917,
+   "deteccoes": 3.5667
+  }
+ ],
+ "rank_virtual": {
+  "reset": 2.88,
+  "janela": 2.4,
+  "incremental": 2.12,
+  "reativacao": 2.9,
+  "controle": 4.69
+ },
+ "orcamento": [
+  {
+   "tipo": "abrupto",
+   "janela K=16": 0.8194,
+   "reset gamma=2": 0.8504,
+   "reset gamma=1.5": 0.8592,
+   "janela K=4": 0.8655
+  },
+  {
+   "tipo": "gradual",
+   "janela K=16": 0.7923,
+   "reset gamma=2": 0.7677,
+   "reset gamma=1.5": 0.8187,
+   "janela K=4": 0.8645
+  },
+  {
+   "tipo": "incremental",
+   "janela K=16": 0.7992,
+   "reset gamma=2": 0.7622,
+   "reset gamma=1.5": 0.788,
+   "janela K=4": 0.8611
+  },
+  {
+   "tipo": "recorrente",
+   "janela K=16": 0.7361,
+   "reset gamma=2": 0.8369,
+   "reset gamma=1.5": 0.8296,
+   "janela K=4": 0.8412
+  }
+ ],
+ "taxas_orcamento": {
+  "janela K=16": 0.062393162393162394,
+  "reset gamma=2": 0.05641025641025641,
+  "reset gamma=1.5": 0.07222222222222222,
+  "janela K=4": 0.2504273504273504
+ },
+ "validacao": {
+  "deteccao": {
+   "aqui": 0.7806,
+   "menelaus": 0.8528
+  },
+  "falsos_pre": {
+   "aqui": 0.0276,
+   "menelaus": 0.0752
+  }
+ },
+ "concordancia": 0.9061965811965814
+}

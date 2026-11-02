@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Comparação entre o HDDDM implementado neste trabalho (própria) e a implementação de referência do pacote menelaus (ref.)}
+\label{tab:validacao-hdddm}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrr}
+\toprule
+Tipo & Detecção (própria) & Detecção (ref.) & Alarmes falsos (própria) & Alarmes falsos (ref.) \\
+\midrule
+Abrupto & 0,900 & 0,967 & 0,033 & 0,076 \\
+Gradual & 0,633 & 0,667 & 0,024 & 0,064 \\
+Incremental & 0,767 & 0,800 & 0,027 & 0,076 \\
+Recorrente & 0,822 & 0,978 & 0,026 & 0,085 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Detecção: fração das transições detectadas; falsos alarmes: por bloco, antes do drift. Concordância bloco a bloco: 0,906.}
+\end{table}

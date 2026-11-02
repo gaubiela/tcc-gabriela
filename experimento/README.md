@@ -7,11 +7,11 @@ Notebook do experimento fatorial descrito no Capítulo 2 (Metodologia).
 1. Abra o `experimento_drift.ipynb` no Google Colab (Arquivo → Fazer upload de notebook, ou Arquivo → Abrir notebook → GitHub).
 2. Execute todas as células (Ambiente de execução → Executar tudo).
 3. Ao final, o arquivo `resultados.zip` é baixado com:
-   - `*.csv`: resultados brutos por execução, médias por condição, sinais do detector, orientação, sensibilidade e a análise com detector ideal;
+   - `*.csv`: resultados brutos por execução, médias por condição, sinais do detector, orientação, sensibilidade, detector ideal e análises complementares;
    - `figuras/`: figuras em PDF e PNG;
    - `tabelas/`: tabelas LaTeX prontas para `\input`.
 
-A execução completa (180 condições × 10 repetições, mais a análise de sensibilidade) leva cerca de 15 minutos no Colab. As sementes são fixas, portanto os resultados são reprodutíveis.
+A execução completa (180 condições × 10 repetições, mais a análise de sensibilidade e as análises complementares de janela de treino, drift virtual, orçamento e validação do detector) leva cerca de 40 minutos no Colab. As sementes são fixas, portanto os resultados são reprodutíveis.
 
 ## Organização no repositório
 

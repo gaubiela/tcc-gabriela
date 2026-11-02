@@ -1,0 +1,27 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift média com janelas de treino de 1, 4 e 8 blocos}
+\label{tab:janela-treino}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{clrrrrr}
+\toprule
+$W$ & Tipo & Reset & Janela & Incremental & Reativação & Controle \\
+\midrule
+1 & Abrupto & 0,860 & 0,869 & 0,778 & 0,860 & 0,618 \\
+ & Gradual & 0,771 & 0,864 & 0,732 & 0,771 & 0,654 \\
+ & Incremental & 0,748 & 0,861 & 0,704 & 0,748 & 0,644 \\
+ & Recorrente & 0,841 & 0,844 & 0,782 & 0,838 & 0,705 \\
+4 & Abrupto & 0,779 & 0,870 & 0,778 & 0,780 & 0,618 \\
+ & Gradual & 0,763 & 0,870 & 0,732 & 0,760 & 0,654 \\
+ & Incremental & 0,727 & 0,858 & 0,704 & 0,726 & 0,644 \\
+ & Recorrente & 0,774 & 0,836 & 0,782 & 0,808 & 0,705 \\
+8 & Abrupto & 0,743 & 0,857 & 0,778 & 0,743 & 0,618 \\
+ & Gradual & 0,746 & 0,858 & 0,732 & 0,743 & 0,654 \\
+ & Incremental & 0,707 & 0,844 & 0,704 & 0,706 & 0,644 \\
+ & Recorrente & 0,750 & 0,811 & 0,782 & 0,797 & 0,705 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Médias sobre severidades, classificadores e 10 repetições. $W$ = 1 corresponde ao fatorial principal.}
+\end{table}

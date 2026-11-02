@@ -1,0 +1,20 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift da janela deslizante e do reset completo com taxas de acionamento comparáveis}
+\label{tab:orcamento}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrr}
+\toprule
+Tipo & Janela, $K$ = 16 & Reset, $\gamma$ = 2 & Reset, $\gamma$ = 1,5 & Janela, $K$ = 4 \\
+\midrule
+Abrupto & 0,819 & 0,850 & 0,859 & 0,865 \\
+Gradual & 0,792 & 0,768 & 0,819 & 0,865 \\
+Incremental & 0,799 & 0,762 & 0,788 & 0,861 \\
+Recorrente & 0,736 & 0,837 & 0,830 & 0,841 \\
+Acion./bloco & 0,062 & 0,056 & 0,072 & 0,250 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Dados da análise de sensibilidade (5 repetições). A última linha traz a taxa média de acionamento de cada configuração.}
+\end{table}
