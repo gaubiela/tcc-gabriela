@@ -3,15 +3,17 @@
 \small
 \caption{Acurácia das políticas de escolha de estratégia nas repetições de teste}
 \label{tab:orientacao}
-\begin{tabular}{lrr}
+\begin{tabular}{lrrr}
 \toprule
-Política & Acurácia pós-drift & Perda vs. retrospecto \\
+Política & Acurácia pós-drift & Perda vs. retrospecto & $p$ (vs. sinais) \\
 \midrule
-Sinais observáveis (proposta) & 0,853 & 0,016 \\
-Oráculo (tipo e severidade reais) & 0,862 & 0,006 \\
-Sempre reset & 0,817 & 0,052 \\
-Sem retreinamento & 0,658 & 0,211 \\
-Melhor em retrospecto & 0,869 & 0,000 \\
+Sinais observáveis (proposta) & 0,860 & 0,009 & -- \\
+Oráculo (tipo e severidade reais) & 0,863 & 0,006 & 0,036 \\
+Sempre janela deslizante & 0,861 & 0,008 & 0,187 \\
+Sempre reset & 0,806 & 0,064 & $<$ 0,001 \\
+Sem retreinamento & 0,657 & 0,212 & -- \\
+Melhor em retrospecto & 0,869 & 0,000 & -- \\
 \bottomrule
 \end{tabular}
+\par\vspace{2pt}{\footnotesize 60 streams de teste $\times$ 3 classificadores; $p$: teste de Wilcoxon pareado contra a política baseada em sinais.}
 \end{table}

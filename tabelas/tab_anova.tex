@@ -1,28 +1,30 @@
 \begin{table}[htbp]
 \centering
 \small
-\caption{ANOVA fatorial da acurácia prequential pós-drift}
+\caption{ANOVA em parcelas subdivididas da acurácia prequential pós-drift}
 \label{tab:anova}
-\begin{tabular}{lrrrr}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llrrrr}
 \toprule
-Termo & gl & F & $p$ & $\eta^2_p$ \\
+Termo & Estrato & gl & F & $p$ & $\eta^2_p$ \\
 \midrule
-Estratégia & 4 & 697,98 & $<$ 0,001 & 0,633 \\
-Severidade & 2 & 344,55 & $<$ 0,001 & 0,298 \\
-Tipo $\times$ Estratégia & 12 & 32,47 & $<$ 0,001 & 0,194 \\
-Tipo & 3 & 128,04 & $<$ 0,001 & 0,192 \\
-Severidade $\times$ Estratégia & 8 & 42,55 & $<$ 0,001 & 0,174 \\
-Classificador $\times$ Estratégia & 8 & 22,29 & $<$ 0,001 & 0,099 \\
-Tipo $\times$ Severidade & 6 & 19,42 & $<$ 0,001 & 0,067 \\
-Tipo $\times$ Severidade $\times$ Estratégia & 24 & 3,19 & $<$ 0,001 & 0,045 \\
-Classificador & 2 & 28,59 & $<$ 0,001 & 0,034 \\
-Severidade $\times$ Classificador $\times$ Estratégia & 16 & 2,14 & 0,005 & 0,021 \\
-Tipo $\times$ Classificador $\times$ Estratégia & 24 & 0,85 & 0,673 & 0,012 \\
-Severidade $\times$ Classificador & 4 & 3,50 & 0,007 & 0,009 \\
-Tipo $\times$ Classificador & 6 & 1,74 & 0,108 & 0,006 \\
-Tipo $\times$ Severidade $\times$ Classificador $\times$ Estratégia & 48 & 0,12 & 1,000 & 0,004 \\
-Tipo $\times$ Severidade $\times$ Classificador & 12 & 0,33 & 0,984 & 0,002 \\
+Estratégia & Dentro & 4; 1512 & 1365,20 & $<$ 0,001 & 0,783 \\
+Severidade & Entre & 2; 108 & 42,25 & $<$ 0,001 & 0,439 \\
+Tipo $\times$ Estratégia & Dentro & 12; 1512 & 60,00 & $<$ 0,001 & 0,323 \\
+Severidade $\times$ Estratégia & Dentro & 8; 1512 & 85,46 & $<$ 0,001 & 0,311 \\
+Tipo & Entre & 3; 108 & 16,04 & $<$ 0,001 & 0,308 \\
+Classificador $\times$ Estratégia & Dentro & 8; 1512 & 44,05 & $<$ 0,001 & 0,189 \\
+Tipo $\times$ Severidade & Entre & 6; 108 & 2,43 & 0,030 & 0,119 \\
+Tipo $\times$ Severidade $\times$ Estratégia & Dentro & 24; 1512 & 6,23 & $<$ 0,001 & 0,090 \\
+Classificador & Dentro & 2; 1512 & 56,08 & $<$ 0,001 & 0,069 \\
+Severidade $\times$ Classificador $\times$ Estratégia & Dentro & 16; 1512 & 4,20 & $<$ 0,001 & 0,043 \\
+Tipo $\times$ Classificador $\times$ Estratégia & Dentro & 24; 1512 & 1,67 & 0,023 & 0,026 \\
+Severidade $\times$ Classificador & Dentro & 4; 1512 & 6,73 & $<$ 0,001 & 0,017 \\
+Tipo $\times$ Classificador & Dentro & 6; 1512 & 3,42 & 0,002 & 0,013 \\
+Tipo $\times$ Severidade $\times$ Classificador $\times$ Estratégia & Dentro & 48; 1512 & 0,25 & 1,000 & 0,008 \\
+Tipo $\times$ Severidade $\times$ Classificador & Dentro & 12; 1512 & 0,63 & 0,815 & 0,005 \\
 \bottomrule
 \end{tabular}
-\par\vspace{2pt}{\footnotesize $R^2$ = 0,759; n = 1800 execuções.}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize gl: graus de liberdade do efeito e do erro. Entre: efeitos testados contra a variação entre streams (120 streams); dentro: contra a variação residual dentro das streams.}
 \end{table}

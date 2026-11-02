@@ -7,7 +7,7 @@ Notebook do experimento fatorial descrito no Capítulo 2 (Metodologia).
 1. Abra o `experimento_drift.ipynb` no Google Colab (Arquivo → Fazer upload de notebook, ou Arquivo → Abrir notebook → GitHub).
 2. Execute todas as células (Ambiente de execução → Executar tudo).
 3. Ao final, o arquivo `resultados.zip` é baixado com:
-   - `*.csv`: resultados brutos por execução, médias por condição, sinais do detector, orientação e sensibilidade;
+   - `*.csv`: resultados brutos por execução, médias por condição, sinais do detector, orientação, sensibilidade e a análise com detector ideal;
    - `figuras/`: figuras em PDF e PNG;
    - `tabelas/`: tabelas LaTeX prontas para `\input`.
 

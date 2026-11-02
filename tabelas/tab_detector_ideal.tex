@@ -1,0 +1,19 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift das estratégias reativas acionadas pelo HDDDM e por um detector ideal}
+\label{tab:detector-ideal}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Tipo & Janela & Reset (HDDDM) & Reset (ideal) & Incremental (HDDDM) & Incremental (ideal) & Reativação (HDDDM) & Reativação (ideal) \\
+\midrule
+Abrupto & 0,869 & 0,860 & 0,880 & 0,778 & 0,788 & 0,860 & 0,880 \\
+Gradual & 0,864 & 0,771 & 0,845 & 0,732 & 0,778 & 0,771 & 0,845 \\
+Incremental & 0,861 & 0,748 & 0,840 & 0,704 & 0,769 & 0,748 & 0,840 \\
+Recorrente & 0,844 & 0,841 & 0,872 & 0,782 & 0,801 & 0,838 & 0,872 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Médias sobre severidades, classificadores e repetições. Detector ideal: um acionamento no primeiro bloco após o fim de cada transição verdadeira.}
+\end{table}
