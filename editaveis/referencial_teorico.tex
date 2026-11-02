@@ -193,7 +193,7 @@ antes do drift e $Q = \mathcal{N}(\mu + \Delta, \sigma^2)$ depois, onde $\mu$,
 $\sigma$ e $\Delta$ são parâmetros escolhidos pelo experimentador.
 
 Sob essa construção, a distância de Hellinger ao quadrado entre $P$ e $Q$,
-a mesma métrica sobre a qual o HDDDM opera \cite{ditzler2011}
+baseada na mesma distância sobre a qual o HDDDM opera \cite{ditzler2011}
 (Seção~\ref{sec:deteccao}), tem forma fechada geral entre duas normais
 univariadas \cite{pardo2006}:
 \begin{equation}
@@ -239,11 +239,15 @@ Alta & 0,7 & 3,10 \\
 A severidade assim calculada é a \emph{severidade real}: um valor exato,
 obtido diretamente das distribuições geradoras conhecidas, sem qualquer
 estimação a partir de amostra. Ela se distingue da \emph{severidade
-observada}, que é o valor da mesma métrica de Hellinger calculado pelo HDDDM
-sobre a janela de dados amostrados da stream (Seção~\ref{sec:deteccao}),
-uma estimativa sujeita ao ruído amostral e ao tamanho de janela adotado. Por
-serem exatamente a mesma métrica, aplicada à mesma família de distribuições,
-a severidade real e a severidade observada são diretamente comparáveis: a
+observada}, estimada a partir dos mesmos histogramas que o HDDDM constrói
+sobre os blocos de dados amostrados da stream (Seção~\ref{sec:deteccao}),
+uma estimativa sujeita ao ruído amostral e ao tamanho do bloco adotado. O
+HDDDM, em sua forma original, usa a média das distâncias de Hellinger
+calculadas atributo a atributo; para que a severidade observada fique na
+mesma escala da severidade real, este trabalho a expressa como $H^2$ da
+distribuição conjunta, conforme detalhado na
+Seção~\ref{sec:config_detector}. Expressas na mesma escala, a severidade
+real e a severidade observada são diretamente comparáveis: a
 primeira serve de padrão-ouro para responder à questão principal deste
 trabalho (Seção~\ref{sec:questoes}), e a segunda é o que estaria
 disponível em produção, onde a distribuição geradora nunca é conhecida;

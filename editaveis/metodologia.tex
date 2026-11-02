@@ -337,6 +337,44 @@ bloco após o fim de cada transição verdadeira. Para avaliar a robustez das co
 de projeto, a cadência da janela deslizante e o parâmetro $\gamma$ do
 limiar do HDDDM, o fatorial é repetido variando cada um isoladamente.
 
+\section{Análises Complementares}
+\label{sec:complementares}
+O fatorial principal faz três escolhas de projeto que favorecem algumas
+estratégias por construção. Primeiro, todos os treinos usam um único bloco,
+de modo que o reset completo, a janela deslizante e a reativação produzem
+modelos treinados com a mesma quantidade de dados e diferem apenas no
+momento em que treinam. Segundo, como a fronteira de decisão acompanha os
+dados, todo drift combina componentes reais e virtuais, e o conhecimento
+anterior à mudança é sempre prejudicial, o que penaliza as estratégias que
+o preservam. Terceiro, a janela deslizante dispõe de mais retreinamentos que
+as estratégias acionadas por detecção. Para verificar em que medida as
+conclusões dependem dessas escolhas, três análises complementares variam cada
+uma delas isoladamente, mantendo todo o restante do desenho:
+
+\begin{itemize}
+  \item \textbf{Janela de treino}: o fatorial é repetido com janelas de
+  treino de quatro e oito blocos (1.600 e 3.200 instâncias) nos treinos do
+  zero. Janelas maiores produzem modelos com mais dados, mas, logo após uma
+  mudança, misturam instâncias anteriores e posteriores a ela.
+  \item \textbf{Drift puramente virtual}: o fatorial é repetido com a
+  fronteira de decisão fixa, $y = \mathbb{1}[\,w^\top x + \varepsilon > 0\,]$,
+  e com o deslocamento das médias feito em direções ortogonais a $w$. Assim,
+  $p(X)$ muda com a mesma severidade e o mesmo padrão temporal do fatorial
+  principal, mas $p(y \mid X)$ e a proporção de classes permanecem
+  constantes, e o conhecimento anterior à mudança continua válido.
+  \item \textbf{Orçamento de retreinamentos}: a partir da análise de
+  sensibilidade, compara-se a janela deslizante e o reset completo em
+  configurações com taxas de acionamento semelhantes, de modo que a
+  comparação não seja influenciada pelo número de retreinamentos.
+\end{itemize}
+
+Por fim, como o HDDDM foi implementado especificamente para este trabalho,
+suas detecções são comparadas, nas mesmas 120 streams do fatorial principal,
+com as da implementação de referência do pacote
+\texttt{menelaus}\footnote{Disponível em
+\url{https://github.com/mitre/menelaus}.}, configurada com a mesma variante
+de limiar e o mesmo valor de $\gamma$.
+
 \section{Protocolo de Validação da Questão Derivada}
 Para responder à questão derivada, cada condição do experimento fatorial
 registra, além da eficácia da estratégia, os três sinais observáveis

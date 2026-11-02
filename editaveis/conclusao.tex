@@ -4,45 +4,48 @@
 Este trabalho investigou como a eficácia de estratégias de retreinamento
 varia em função do tipo e da severidade do drift e do classificador
 monitorado, por meio de um experimento fatorial controlado com 180 condições
-e 1.800 execuções em ambiente de stream. A severidade foi operacionalizada
-pela distância de Hellinger, cuja forma fechada entre distribuições normais
-permitiu injetar cada nível com valor exato e compará-lo com a estimativa do
-detector.
+e 1.800 execuções em ambiente de stream, complementado por análises que
+variam o tamanho da janela de treino, a natureza do drift e o número de
+retreinamentos permitido. A severidade foi operacionalizada pela distância de
+Hellinger, cuja forma fechada entre distribuições normais permitiu injetar
+cada nível com valor exato e compará-lo com a estimativa do detector.
 
-Os resultados mostram que tipo, severidade e classificador interagem
-significativamente com a estratégia, mas que, nas condições estudadas, o que
-mais diferenciou as estratégias foi a forma de acionamento. A janela
-deslizante, retreinada em cadência fixa, foi a mais eficaz em 29 das 36
-combinações de tipo, severidade e classificador, com vantagem pequena sob
-drift abrupto e recorrente e grande sob drift gradual e incremental, nos
-quais o HDDDM detecta a mudança no meio da transição e as estratégias
-acionadas por ele retreinam cedo demais. Essa vantagem custou cerca de quatro
-vezes mais retreinamentos e desapareceu quando a cadência foi reduzida. O
-reset completo foi a melhor estratégia sob drift abrupto de severidade alta;
-a reativação de modelos históricos identificou corretamente as recorrências,
-mas igualou o reset em acurácia, com menor custo; e o retreinamento
-incremental dependeu fortemente do classificador, sendo equivalente ao
-reset no XGBoost e o pior entre as estratégias no Random Forest.
+Tipo, severidade e classificador interagiram significativamente com a
+estratégia. No fatorial principal, a janela deslizante, retreinada em
+cadência fixa, foi a mais eficaz em 29 das 36 combinações de tipo,
+severidade e classificador, com vantagem grande sob drift gradual e
+incremental, nos quais o HDDDM detecta a mudança no meio da transição. Essa
+vantagem, porém, decorreu em boa parte de a janela retreinar cerca de quatro
+vezes mais: com o mesmo número de retreinamentos, o reset completo foi mais
+eficaz sob drift abrupto e recorrente, e a janela, sob drift gradual e
+incremental. A reativação de modelos históricos identificou corretamente as
+recorrências e superou o reset quando o modelo arquivado havia sido treinado
+com mais dados; o retreinamento incremental dependeu fortemente do
+classificador no fatorial principal e passou a ser a estratégia mais eficaz
+sob drift puramente virtual, em que o conhecimento anterior continua válido.
 
-Quanto à questão derivada, os sinais observáveis do detector mostraram-se
-informativos: a severidade observada acompanhou a severidade real, a
-velocidade da divergência distinguiu mudanças abruptas de lentas e a
-distância ao repositório identificou as recorrências. A orientação construída
-a partir deles superou a prática de sempre aplicar o reset completo, mas não
-a política fixa de sempre usar a janela deslizante, já que esta foi quase
-sempre a estratégia mais eficaz.
+Quanto à questão derivada, os sinais observáveis do detector estimaram bem a
+severidade, a velocidade e a recorrência do drift nas condições estudadas,
+embora o desenho experimental favoreça essas estimativas. A orientação
+construída a partir deles não superou, em acurácia, a política fixa de
+sempre usar a janela deslizante, mas a análise com orçamento igualado indica
+que os sinais são úteis para escolher a estratégia de menor custo que
+mantém a acurácia, em especial para distinguir mudanças abruptas de lentas.
 
 As principais contribuições do trabalho são: (i) um protocolo experimental
-reprodutível, disponibilizado em um notebook executável, que controla tipo e
-severidade do drift por construção e permite comparar a severidade real e a
-observada; (ii) evidência de que, para drift lento, o momento do acionamento
-importa mais que o procedimento de retreinamento, de modo que estratégias
-acionadas por detecção podem perder para uma janela agendada mesmo usando o
-mesmo procedimento de ajuste; (iii) evidência de que a eficácia da
-atualização incremental depende do mecanismo do classificador; e (iv) a
+reprodutível, disponibilizado em um notebook executável, que controla tipo,
+severidade e natureza do drift por construção e permite comparar a
+severidade real e a observada; (ii) evidência, em ambiente controlado, de
+que a comparação entre estratégias de retreinamento depende do número de
+retreinamentos considerado, e de que, com custo igual, o acionamento por
+detecção é mais eficiente para mudanças abruptas e o retreinamento agendado,
+para mudanças lentas; (iii) evidência de que a vantagem da atualização
+incremental e da reativação de modelos depende, respectivamente, de o
+conhecimento anterior continuar válido e de o modelo histórico ter sido
+treinado com mais dados do que os disponíveis após a mudança; e (iv) a
 indicação de que a estatística de um detector baseado em distribuição, sem
-uso de rótulos, carrega informação suficiente para estimar severidade,
-velocidade e recorrência do drift.
+uso de rótulos, carrega informação sobre a severidade, a velocidade e a
+recorrência do drift.
 
 \section{Trabalhos Futuros}
 
@@ -50,14 +53,16 @@ Os limites discutidos na Seção~\ref{sec:ameacas} apontam os desdobramentos
 mais diretos. O primeiro é replicar o experimento com dados reais e com os
 conjuntos de referência usados pelo estudo de base \cite{rocha2026}, com
 atributos correlacionados e transições de duração variável. O segundo é
-incluir os demais detectores baseados em distribuição (JSDDM e KSDDM) e
-estratégias híbridas, que combinem acionamento por detecção com
-retreinamento agendado ou que continuem retreinando após uma detecção até a
-estabilização da divergência. O terceiro é construir uma orientação sensível
-ao custo, que pondere acurácia e número de retreinamentos e use os sinais
-observáveis para decidir quando uma estratégia mais barata é suficiente,
-avaliada como política online, que troque de estratégia a cada episódio. Por
-fim, cenários com janelas de treino maiores e rótulos atrasados permitiriam
-verificar se a reativação de modelos históricos, que neste trabalho igualou
-o reset, passa a superá-lo quando o modelo reativado foi treinado com mais
-dados do que os disponíveis após a mudança.
+considerar rótulos com atraso, hipótese mais realista para produção e que
+deve penalizar as estratégias que dependem de rótulos contínuos, como a
+janela deslizante. O terceiro é incluir os demais detectores baseados em
+distribuição (JSDDM e KSDDM) e estratégias híbridas, que combinem
+acionamento por detecção com retreinamento agendado ou que continuem
+retreinando após uma detecção até a estabilização da divergência. O quarto é
+construir uma orientação sensível ao custo, que pondere acurácia e número de
+retreinamentos, avaliada como política em tempo real que troque de
+estratégia a cada episódio, e que incorpore algum indício da natureza do
+drift, real ou virtual, para decidir entre preservar e descartar o modelo.
+Por fim, avaliar os sinais observáveis com severidades contínuas e
+recorrências imperfeitas permitiria medir sua qualidade em condições menos
+favoráveis que as deste trabalho.

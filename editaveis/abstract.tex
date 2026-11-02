@@ -13,19 +13,20 @@ classifiers (Naive Bayes, Random Forest, and XGBoost), in 180 conditions and
 1,800 runs. Severity is operationalized through the Hellinger distance,
 exact for the generating distributions and estimated by the adopted
 detector (HDDDM). Drift type, severity, and classifier all interacted
-significantly with the strategy, but what most distinguished the strategies
-was how they are triggered: the sliding window was the most effective
+significantly with the strategy. The sliding window was the most effective
 strategy in 29 of the 36 combinations, with a large advantage under gradual
 and incremental drift, where the detector signals the change in the middle
-of the transition and detection-triggered strategies retrain too early, at
-the cost of about four times as many retraining runs. Full reset was the
-best strategy under high-severity abrupt drift, reactivation matched full
-reset at a lower cost, and the effectiveness of incremental retraining
-depended on the classifier. As an exploratory extension, the detector's
+of the transition, but it retrained about four times as often; with the
+same number of retraining runs, full reset was more effective under abrupt
+and recurring drift. Complementary analyses showed that historical model
+reactivation outperforms full reset when the archived model was trained on
+more data, and that incremental retraining, whose effectiveness depended on
+the classifier, becomes the best strategy under purely virtual drift. As an exploratory extension, the detector's
 observable signals estimated the drift's severity (Spearman correlation of
 0.90), speed (AUC of 0.97), and recurrence well; a guideline built from them
-outperformed always applying full reset, but not a fixed policy of always
-using the sliding window.
+outperformed always applying full reset, but not, in accuracy, a fixed
+policy of always using the sliding window, which suggests that their most
+promising use is choosing the lowest-cost strategy.
    \vspace{\onelineskip}
 
 \noindent \textbf{Key-words}: data drift. concept drift. stream learning.

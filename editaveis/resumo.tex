@@ -13,19 +13,21 @@ classificadores (Naive Bayes, Random Forest e XGBoost), em 180 condições e
 1.800 execuções. A severidade é operacionalizada pela distância de
 Hellinger, com valor exato nas distribuições geradoras e estimado pelo
 detector adotado (HDDDM). Tipo, severidade e classificador interagiram
-significativamente com a estratégia, mas o fator que mais diferenciou as
-estratégias foi a forma de acionamento: a janela deslizante foi a mais
-eficaz em 29 das 36 combinações, com grande vantagem sob drift gradual e
-incremental, nos quais o detector sinaliza a mudança no meio da transição e
-as estratégias acionadas por ele retreinam cedo demais, ao custo de cerca de
-quatro vezes mais retreinamentos. O reset completo foi a melhor estratégia
-sob drift abrupto de severidade alta, a reativação igualou o reset com menor
-custo, e a eficácia do retreinamento incremental dependeu do classificador.
+significativamente com a estratégia. A janela deslizante foi a mais eficaz
+em 29 das 36 combinações, com grande vantagem sob drift gradual e
+incremental, nos quais o detector sinaliza a mudança no meio da transição,
+mas retreinou cerca de quatro vezes mais; com o mesmo número de
+retreinamentos, o reset completo foi mais eficaz sob drift abrupto e
+recorrente. Análises complementares mostraram que a reativação de modelos
+históricos supera o reset quando o modelo arquivado foi treinado com mais
+dados, e que o retreinamento incremental, cuja eficácia dependeu do
+classificador, passa a ser a melhor estratégia sob drift puramente virtual.
 Como desdobramento exploratório, os sinais observáveis do detector
 estimaram bem a severidade (correlação de Spearman de 0,90), a velocidade
 (AUC de 0,97) e a recorrência do drift; a orientação construída a partir
-deles superou a prática de sempre aplicar o reset completo, mas não a
-política fixa de sempre usar a janela deslizante.
+deles superou a prática de sempre aplicar o reset completo, mas não, em
+acurácia, a política fixa de sempre usar a janela deslizante, o que indica
+que seu uso mais promissor é escolher a estratégia de menor custo.
 \vspace{\onelineskip}
     
 \noindent \textbf{Palavras-chave}: data drift. concept drift. aprendizado em

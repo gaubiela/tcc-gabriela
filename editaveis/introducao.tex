@@ -52,6 +52,31 @@ distribuição atual e distribuições históricas, indício de recorrência, a
 estratégias de retreinamento recomendadas, de modo a orientar decisões
 futuras em pipelines de MLOps (Machine Learning Operations).
 
+\section*{Objetivos}
+
+O objetivo geral deste trabalho é avaliar como a eficácia de estratégias de
+retreinamento varia em função do tipo e da severidade do drift e do
+classificador monitorado, em ambiente de aprendizado em stream. Para
+alcançá-lo, são definidos os seguintes objetivos específicos:
+
+\begin{enumerate}
+  \item construir um gerador de streams sintéticas no qual o padrão temporal
+  e a severidade do drift sejam controlados por construção, com a
+  severidade definida pela distância de Hellinger em forma fechada;
+  \item implementar o detector HDDDM, as quatro estratégias de
+  retreinamento e a condição de controle para três classificadores com
+  mecânicas distintas;
+  \item comparar a eficácia e o custo das estratégias em um experimento
+  fatorial e estimar os efeitos do tipo, da severidade e do classificador
+  sobre essa eficácia;
+  \item verificar a robustez das conclusões a escolhas de projeto do
+  experimento, como o tamanho da janela de treino, a natureza do drift e o
+  número de retreinamentos permitido;
+  \item avaliar em que medida sinais observáveis do detector estimam a
+  severidade, a velocidade e a recorrência do drift, e se permitem esboçar
+  uma orientação preliminar de escolha de estratégia.
+\end{enumerate}
+
 Este trabalho está organizado da seguinte forma. O Capítulo 1
 apresenta o referencial teórico,
 estabelecendo a definição formal de drift, suas dimensões de caracterização,

@@ -5,8 +5,9 @@ Este capítulo apresenta os resultados do experimento fatorial descrito na
 Seção~\ref{sec:fatorial}. A Seção~\ref{sec:res_detector} descreve o
 comportamento do detector, comum a todas as condições; as
 Seções~\ref{sec:res_eficacia} a~\ref{sec:res_sensibilidade} respondem à
-questão principal; e a Seção~\ref{sec:res_derivada} apresenta os resultados
-da questão derivada. Todas as médias referem-se a dez repetições por
+questão principal; a Seção~\ref{sec:res_complementares} verifica a
+robustez dos resultados a escolhas de projeto; e a
+Seção~\ref{sec:res_derivada} apresenta os resultados da questão derivada. Todas as médias referem-se a dez repetições por
 condição, salvo indicação em contrário, e todas as acurácias são acurácias
 prequential calculadas a partir do início do drift. O notebook que produz
 cada tabela e figura está disponível no repositório do trabalho.
@@ -146,7 +147,9 @@ pequena: a janela deslizante variou entre 0,852 e 0,871 e o reset, entre
 \section{Análise Estatística}
 \label{sec:res_estatistica}
 
-A Tabela~\ref{tab:anova} apresenta a ANOVA em parcelas subdivididas. A
+A Tabela~\ref{tab:anova} apresenta a ANOVA em parcelas subdivididas. Como,
+com 1.800 execuções, mesmo efeitos pequenos resultam em valores de $p$ muito
+baixos, a análise a seguir se apoia nos tamanhos de efeito. A
 estratégia foi o fator de maior efeito ($\eta^2_p = 0{,}783$), seguida da
 severidade (0,439), das interações tipo $\times$ estratégia (0,323) e
 severidade $\times$ estratégia (0,311), do tipo (0,308) e da interação
@@ -224,6 +227,99 @@ Em nenhuma das configurações de $\gamma$, porém, o reset superou a janela
 com a cadência principal.
 
 \input{tabelas/tab_sensibilidade}
+
+\section{Análises Complementares}
+\label{sec:res_complementares}
+
+As análises desta seção verificam se os resultados anteriores se mantêm
+quando se alteram as três escolhas de projeto descritas na
+Seção~\ref{sec:complementares} e quando se troca a implementação do
+detector.
+
+\subsection{Tamanho da janela de treino}
+
+Aumentar a janela de treino dos treinos do zero não alterou a vantagem da
+janela deslizante (Tabela~\ref{tab:janela-treino}). Com quatro blocos, a
+janela foi a melhor estratégia em 34 das 36 combinações; com oito, em 33. As
+estratégias acionadas por detecção, ao contrário, pioraram com janelas
+maiores: a acurácia média do reset completo caiu de 0,805 com um bloco para
+0,761 com quatro e 0,737 com oito. Como o reset treina no momento da
+detecção, uma janela maior inclui principalmente dados anteriores à
+mudança. A janela deslizante sofre menos esse efeito porque continua
+retreinando nos blocos seguintes.
+
+\input{tabelas/tab_janela_treino}
+
+O tamanho da janela de treino mudou, porém, a comparação entre a reativação
+e o reset no padrão recorrente. Com um bloco, a reativação ficou ligeiramente
+abaixo do reset (diferença média de $-0{,}003$); com quatro e oito blocos,
+passou a superá-lo, em 0,034 e 0,047 ($p < 0{,}001$ no teste de Wilcoxon
+pareado), porque o modelo reativado foi treinado com mais dados da
+distribuição que retorna do que o modelo novo treinado logo após a
+detecção. Mesmo assim, ficou abaixo da janela deslizante (0,808 contra 0,836
+com quatro blocos).
+
+\subsection{Drift puramente virtual}
+
+Sob drift puramente virtual (Tabela~\ref{tab:drift-virtual}), as diferenças
+entre as estratégias diminuíram bastante: a acurácia média pós-drift ficou
+entre 0,874 e 0,884 para as quatro estratégias, contra 0,828 do controle. O
+controle perdeu acurácia mesmo sem mudança na relação entre atributos e
+rótulo (de 0,891 antes do drift para 0,828 depois), porque os três
+classificadores erram ao extrapolar para regiões do espaço em que não foram
+treinados. A ordenação também mudou: o retreinamento incremental, que
+preserva o conhecimento anterior, obteve o melhor rank médio (2,12), seguido
+da janela deslizante (2,40), do reset completo (2,88) e da reativação
+(2,90), e foi a melhor estratégia em 19 das 36 combinações, contra 14 da
+janela. A janela manteve vantagem clara apenas no padrão incremental (0,887
+contra no máximo 0,860 das demais), novamente aquele em que o detector
+dispara no meio da transição.
+
+\input{tabelas/tab_drift_virtual}
+
+\subsection{Orçamento de retreinamentos}
+
+Quando a comparação é feita com taxas de acionamento semelhantes, a vantagem
+da janela deslizante desaparece na maior parte dos tipos de drift
+(Figura~\ref{fig:orcamento} e Tabela~\ref{tab:orcamento}). Com cadência de
+dezesseis blocos (0,062 acionamento por bloco), a janela ficou abaixo do
+reset completo com o limiar principal (0,056 acionamento por bloco) nos
+padrões abrupto (0,819 contra 0,850) e recorrente (0,736 contra 0,837), e
+acima dele nos padrões gradual (0,792 contra 0,768) e incremental (0,799
+contra 0,762). Com o limiar mais permissivo ($\gamma = 1{,}5$; 0,072
+acionamento por bloco), o reset superou a janela também no padrão gradual
+(0,819), e a janela manteve vantagem apenas no incremental, de 0,011. Na
+Figura~\ref{fig:orcamento}, os pontos do reset e da reativação ficam acima
+da curva da janela nos padrões abrupto e recorrente: para alcançar a mesma
+acurácia, a janela precisa de cerca de três a quatro vezes mais
+retreinamentos.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\textwidth]{figuras/resultados/fig_orcamento.pdf}
+\caption{Acurácia pós-drift em função da taxa de acionamento, por tipo de
+drift, para a janela deslizante com cadências de 2 a 16 blocos e para o reset
+completo e a reativação com $\gamma$ de 1,5 a 2,5 (análise de sensibilidade,
+cinco repetições).}
+\label{fig:orcamento}
+\end{figure}
+
+\input{tabelas/tab_orcamento}
+
+\subsection{Validação do detector}
+
+A implementação de referência do HDDDM, no pacote \texttt{menelaus}, concordou
+com a implementação deste trabalho em 90,6\% dos blocos
+(Tabela~\ref{tab:validacao-hdddm}). A implementação de referência detectou
+mais transições (85,3\% contra 78,1\%, contando qualquer detecção no
+intervalo de tolerância), mas produziu cerca de 2,7 vezes mais falsos
+alarmes antes do drift (0,075 contra 0,028 por bloco), diferença atribuível
+principalmente ao número de intervalos dos histogramas, que nela cresce com
+a referência. O padrão relevante para os resultados se manteve nas duas
+implementações: as transições graduais foram as menos detectadas (63,3\% e
+66,7\%), e as abruptas e recorrentes, as mais detectadas.
+
+\input{tabelas/tab_validacao_hdddm}
 
 \section{Sinais Observáveis e Orientação Preliminar}
 \label{sec:res_derivada}
