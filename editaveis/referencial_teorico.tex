@@ -192,7 +192,12 @@ essa operacionalização a partir de um modelo gerador simples e controlável: u
 episódio de drift em uma dada feature é modelado como um deslocamento entre
 duas distribuições normais de mesma variância, $P = \mathcal{N}(\mu, \sigma^2)$
 antes do drift e $Q = \mathcal{N}(\mu + \Delta, \sigma^2)$ depois, onde $\mu$,
-$\sigma$ e $\Delta$ são parâmetros escolhidos pelo experimentador.
+$\sigma$ e $\Delta$ são parâmetros escolhidos pelo experimentador. O uso da
+distância de Hellinger para quantificar essa mudança tem precedente na
+literatura: \citeonline{webb2016} definem a magnitude de um drift como a
+distância entre as distribuições em dois instantes e, sem fixar uma medida
+específica na definição, adotam a distância de Hellinger em seu estudo de
+caso.
 
 Sob essa construção, a distância de Hellinger ao quadrado entre $P$ e $Q$,
 baseada na mesma distância sobre a qual o HDDDM opera \cite{ditzler2011}
