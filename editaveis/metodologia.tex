@@ -186,8 +186,8 @@ Os três classificadores descritos na Seção de Classificadores do referencial
 teórico permanecem, entre atualizações, congelados no estado em que foram
 treinados pela última vez; nenhum deles se atualiza continuamente por
 exigência própria. O Naive Bayes atualiza contadores de forma nativa e
-imediata; o Random Forest, inspirado nas variantes adaptativas discutidas por
-\citeonline{gomes2017}, mantém um conjunto de árvores ao qual novas árvores
+imediata; o Random Forest, inspirado em variantes adaptativas como o ARF
+\cite{gomes2017arf}, mantém um conjunto de árvores ao qual novas árvores
 podem ser acrescentadas; o
 XGBoost mantém o conjunto de árvores já construído e só o modifica quando
 uma estratégia de retreinamento é efetivamente acionada. Essa uniformidade é
@@ -203,8 +203,8 @@ incremental acumula as estatísticas suficientes de cada classe. O Random
 Forest é inicializado com 50 árvores, e sua atualização incremental acrescenta
 25 novas árvores treinadas sobre a janela recente, sem descartar as
 anteriores, e a predição é a média das probabilidades ponderada pelo número
-de árvores de cada grupo. Diferentemente das variantes adaptativas de
-\citeonline{gomes2017}, a implementação não inclui detectores internos de
+de árvores de cada grupo. Diferentemente do ARF
+\cite{gomes2017arf}, a implementação não inclui detectores internos de
 drift por árvore, para que nenhum mecanismo concorra com o HDDDM. O XGBoost é inicializado com 50 árvores
 (profundidade máxima 4, taxa de aprendizado 0,3), e sua atualização
 incremental acrescenta 25 rodadas de boosting sobre a janela recente,
@@ -296,7 +296,7 @@ incremental, reativação de modelos históricos, sem retreinamento
 
 \section{Métricas de Avaliação}
 A eficácia de cada estratégia é avaliada por acurácia prequential, o
-protocolo de teste-então-treino recomendado por \citeonline{gama2014} para
+protocolo de teste-então-treino descrito por \citeonline{gama2014} para
 avaliação em stream, que preserva a ordem temporal das instâncias, calculada
 separadamente antes e depois do ponto de injeção do drift. Complementam
 essa métrica principal o tempo, em número de instâncias, até a recuperação da
@@ -409,7 +409,8 @@ de base que orientou as escolhas deste trabalho. \citeonline{rocha2026}
 propõe uma arquitetura conceitual de monitoramento de drift e avalia
 empiricamente os três detectores de distribuição adotados aqui (HDDDM,
 JSDDM e KSDDM), mas usando um único classificador (Naive Bayes), uma única
-estratégia de retreinamento (reset completo) e processamento em batch, sem
+política de retreinamento (atualização incremental enquanto não há drift e
+reset completo quando ele é detectado) e processamento em batch, sem
 nunca medir a severidade do drift nem investigar a interação entre tipo de
 drift, classificador e estratégia. O desenho fatorial deste trabalho
 (Seção~\ref{sec:fatorial}) estende essa avaliação exatamente nos pontos que

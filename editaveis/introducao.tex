@@ -17,17 +17,18 @@ classificador \cite{bayram2022}. O que permanece pouco resolvido é a etapa
 seguinte, a de decidir como reagir ao drift detectado. Uma prática comum é
 adotar uma resposta única e fixa, tipicamente descartar o modelo e
 retreiná-lo do zero. Há evidências, no entanto, de que nenhuma resposta é
-ótima em todos os cenários: estratégias adequadas para real drift são
-subótimas sob virtual drift \cite{oliveira2023}, o reaproveitamento de
-modelos supera o retreinamento do zero quando conceitos reaparecem
+ótima em todos os cenários: estratégias adequadas para real drift podem não
+ser as mais indicadas sob virtual drift \cite{oliveira2023}, o
+reaproveitamento de modelos traz ganhos quando conceitos reaparecem
 \cite{sun2018}, e classificadores distintos reagem de formas substancialmente
 diferentes ao mesmo drift \cite{webb2016}. Além do tipo de drift, sua
 severidade também condiciona a resposta adequada: \citeonline{wang2022elastic},
 em estudo sobre boosting adaptativo à severidade do drift,
-demonstram formalmente que a severidade do drift determina a taxa de
-convergência necessária para readaptação do modelo, e \citeonline{wang2024quadcdd}
-argumentam que caracterizar um drift de forma completa exige representar tipo
-e severidade conjuntamente, não apenas um desses eixos isoladamente. A
+relacionam a severidade à taxa de convergência do modelo e mostram, por uma
+análise de limites de erro, que quanto maior a severidade, maior o erro do
+modelo sob drift, e \citeonline{wang2024quadcdd} propõem caracterizar cada
+drift por seu início, fim, severidade e tipo, e não apenas pelo momento em que
+começa. A
 escolha da estratégia de resposta deveria, portanto, depender do tipo e da
 severidade do drift, além do classificador em uso, dependência conjunta que
 raramente é investigada de forma sistemática.

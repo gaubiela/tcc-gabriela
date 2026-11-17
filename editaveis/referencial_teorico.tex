@@ -23,9 +23,9 @@ ao contrário de uma falha de código, um modelo degradado por drift permanece
 funcional, apenas com qualidade decrescente.
 
 Nesse contexto, é fundamental diferenciar o ambiente de aprendizado em stream
-do tradicional aprendizado em lote. Conforme argumentam \citeonline{lu2018},
-enquanto o aprendizado em lote pressupõe acesso a um conjunto fixo e completo
-de dados antes do treinamento, o aprendizado em stream processa instâncias
+do tradicional aprendizado em lote. Conforme descrevem \citeonline{gama2014},
+enquanto o aprendizado em lote pressupõe que todo o conjunto de treinamento
+esteja disponível no momento do treinamento, o aprendizado em stream processa instâncias
 que chegam uma a uma, ao longo do tempo. Nesse cenário, o objetivo não é
 treinar uma única vez sobre dados estáticos, mas manter o modelo válido
 sobre um fluxo potencialmente infinito e sujeito a mudanças.
@@ -63,9 +63,10 @@ a distribuição alterna entre dois estados até que o novo predomine; no
 segundo, os parâmetros mudam em pequenos incrementos contínuos. O drift
 recorrente, por sua vez, descreve situações em que uma distribuição
 anteriormente observada reaparece após um intervalo, padrão relevante em
-domínios com sazonalidade. Conforme demonstram \citeonline{sun2018} e
-\citeonline{li2021}, para esse último padrão o reaproveitamento de modelos
-históricos é mais eficiente do que o retreinamento do zero.
+domínios com sazonalidade. Para esse último padrão, abordagens que armazenam modelos de
+conceitos anteriores e os reaproveitam quando eles reaparecem
+\cite{sun2018,li2021} relatam ganhos de acurácia sobre métodos que não
+exploram a recorrência.
 
 A segunda dimensão é conceitual, e distingue o que exatamente mudou na
 distribuição conjunta entre entradas e rótulo. \citeonline{gama2014}
@@ -73,10 +74,10 @@ denominam real drift a mudança na relação entre atributos e rótulo, quando a
 própria fronteira de decisão se altera, e virtual drift a mudança restrita à
 distribuição das entradas, quando o conceito aprendido permanece válido ainda
 que os dados venham de uma região distinta do espaço de atributos. Essa
-distinção tem consequência prática direta, pois, conforme demonstram
-\citeonline{oliveira2023}, estratégias adequadas para real drift são subótimas
-quando aplicadas a virtual drift, precisamente porque, neste último caso, a
-relação verdadeira entre entrada e saída não se alterou.
+distinção tem consequência prática direta, pois, conforme mostram
+\citeonline{oliveira2023}, estratégias adequadas para real drift podem não
+ser as mais indicadas para virtual drift, precisamente porque, neste último
+caso, as fronteiras verdadeiras entre as classes não se alteraram.
 
 A terceira dimensão é estrutural, e refere-se a onde a mudança se manifesta no
 espaço de atributos. Conforme sistematizam \citeonline{barddal2017}, o
@@ -85,15 +86,15 @@ atributos deixa de ser relevante, ou passa a ser relevante, para a tarefa de
 predição, podendo ocorrer simultaneamente ao drift de conceito tradicional.
 
 A quarta dimensão é quantitativa, e não descreve o que muda, mas o quanto
-muda. Conforme propõem \citeonline{wang2024quadcdd}, uma caracterização
-completa de um episódio de drift deveria representar conjuntamente seu
-início, fim, tipo e severidade, sendo a severidade a magnitude da mudança na
-distribuição, ortogonal à sua classificação temporal, conceitual ou
-estrutural. \citeonline{wang2022elastic}, no mesmo estudo sobre boosting
-adaptativo já citado na introdução, sustentam formalmente essa
-relevância ao demonstrar que a severidade do drift determina a taxa de
-convergência necessária para a readaptação do modelo, de modo que dois
-episódios do mesmo padrão temporal podem exigir respostas de intensidade
+muda. Conforme propõem \citeonline{wang2024quadcdd}, um episódio de drift
+pode ser caracterizado de forma mais completa por um quádruplo formado por
+seu início, fim, severidade e tipo, em vez de apenas pelo momento em que a
+mudança começa. \citeonline{wang2022elastic}, no mesmo estudo sobre
+boosting adaptativo já citado na introdução, relacionam a severidade do
+drift à taxa de convergência do modelo e mostram, por uma análise de limites
+de erro, que quanto maior a severidade, maior o erro do modelo sob drift; por
+isso, propõem ajustar a intensidade da adaptação a cada episódio, de modo que
+dois episódios do mesmo padrão temporal podem exigir respostas de intensidade
 distinta caso apresentem severidades diferentes.
 
 A Tabela~\ref{tab:dimensoes} resume as quatro dimensões e os valores que cada
@@ -124,8 +125,8 @@ caracterizar o tipo de drift é, na prática, mais difícil do que a
 formalização sugere. Conforme organizam \citeonline{lu2018}, a pesquisa da
 área divide-se em três componentes, a detecção de drift, que responde se a
 mudança ocorre, o entendimento de drift, que responde quando, como, onde e
-com que intensidade ela ocorre, e a adaptação ao drift, sendo o componente de
-entendimento o menos desenvolvido. Esse reconhecimento é central para este
+com que intensidade ela ocorre, e a adaptação ao drift, e observam que poucos
+métodos são capazes de responder como e onde a mudança ocorre. Esse reconhecimento é central para este
 trabalho, cujo objetivo se apoia justamente sobre os sinais que permanecem
 observáveis diante dessa dificuldade. Das quatro dimensões apresentadas, este
 trabalho manipula experimentalmente a temporal e a quantitativa, únicas
@@ -137,8 +138,8 @@ tratadas como características latentes não abordadas por este trabalho.
 \label{sec:deteccao}
 Estabelecidas as dimensões que caracterizam a mudança, a etapa de
 monitoramento é responsável por sinalizar quando ela ocorre. Conforme
-sistematiza \citeonline{bayram2022}, os métodos de detecção organizam-se em
-duas grandes famílias, distinguidas pela natureza do sinal que monitoram: os
+\citeonline{bayram2022}, as abordagens de detecção predominantes organizam-se
+em duas famílias, distinguidas pela natureza do sinal que monitoram: os
 baseados em distribuição, que comparam a distribuição estatística dos dados
 de um intervalo de referência com a de um intervalo mais recente, e os
 baseados em desempenho, que monitoram a taxa de erro do classificador ao
@@ -152,9 +153,10 @@ Este trabalho adota o HDDDM (Hellinger Distance Drift Detection Method)
 Hellinger, como detector fixo em todas as condições experimentais, de modo
 que a variável observada seja a estratégia de resposta, e não o mecanismo de
 detecção.
-A escolha entre as três variantes de detectores de distribuição descritas por
-\citeonline{bayram2022}: HDDDM, JSDDM (Jensen-Shannon Distance Drift
+A escolha entre as três variantes de detectores de distribuição avaliadas por
+\citeonline{rocha2026}, o HDDDM e os métodos JSDDM (Jensen-Shannon Drift
 Detection Method) e KSDDM (Kolmogorov-Smirnov Drift Detection Method),
+propostos naquele trabalho,
 fundamentadas respectivamente
 em distância de Hellinger, divergência de Jensen-Shannon e teste de
 Kolmogorov-Smirnov, não é arbitrária: apenas a distância de Hellinger admite
@@ -291,9 +293,11 @@ que o do reset completo, cujo acionamento depende da taxa de detecção do
 HDDDM, o oposto do que uma comparação ingênua por evento sugeriria. O
 retreinamento incremental ajusta os parâmetros do modelo a cada novo lote de
 dados, sem descartar o conhecimento previamente adquirido, também acionado
-por detecção. A reativação de modelos históricos, quarta categoria proposta
-por \citeonline{sun2018} especificamente para o tratamento de drift
-recorrente, mantém um repositório de modelos previamente descartados,
+por detecção. A reativação de modelos históricos, quarta estratégia
+considerada, inspira-se em abordagens voltadas ao drift recorrente, como a de
+\citeonline{sun2018}, que armazenam os classificadores de conceitos
+anteriores para reaproveitá-los quando um conceito reaparece. Ela mantém um
+repositório de modelos previamente descartados,
 associados cada um à distribuição sob a qual foram treinados, e reativa o
 candidato mais próximo da distribuição atual quando um sinal de recorrência
 é identificado. Esse sinal é definido pela mesma distância de Hellinger
@@ -336,22 +340,25 @@ sob condições controladas de tipo, severidade e classificador.
 
 No entanto, a eficácia de cada estratégia não é uniforme. Conforme demonstram
 \citeonline{rahmani2023} com dados reais, o desempenho do retreinamento depende
-do tipo de drift enfrentado e da disponibilidade de rótulos para sustentá-lo,
-com o retreinamento adequado recuperando e superando o desempenho de um modelo
-sem atualização na maioria dos cenários testados. Diante disso, reforça-se a
+do tipo de drift enfrentado e da forma como os rótulos usados no retreinamento
+são obtidos: sob mudança de conceito, por exemplo, apenas o retreinamento com
+os dados integralmente rerrotulados superou o modelo sem atualização. Ainda
+assim, o retreinamento adequado superou o desempenho de um modelo sem
+atualização na maioria dos cenários testados. Diante disso, reforça-se a
 premissa central deste trabalho, de que a estratégia de resposta ao drift não
 deveria ser tratada como uma escolha única e fixa, mas condicionada às
 características da mudança e do modelo em uso.
 
 \section{Classificadores}
 Além da estratégia de resposta, o próprio classificador monitorado influencia
-a forma como o sistema reage ao drift. Conforme demonstram
-\citeonline{wang2022dynamic}, em estudo distinto sobre ponderação dinâmica
-de atributos em streams (não se confunde com o estudo sobre boosting
-adaptativo citado nas seções anteriores), um mesmo mecanismo de adaptação
-produz ganhos de
-desempenho distintos para diferentes classificadores, o que motiva a
-investigação dessa interação a partir de modelos com mecânicas distintas.
+a forma como o sistema reage ao drift. Conforme mostram
+\citeonline{barddal2016}, um mesmo mecanismo de adaptação, a ponderação
+dinâmica de atributos em streams, produz ganhos de acurácia distintos para
+diferentes classificadores (em média, 10,69\% para o k-vizinhos mais
+próximos, 6,23\% para o Naive Bayes e 4,42\% para a Hoeffding Adaptive
+Tree), e \citeonline{webb2016} observam que classificadores distintos
+respondem de formas distintas a um mesmo drift, o que motiva a investigação
+dessa interação a partir de modelos com mecânicas distintas.
 
 O Naive Bayes é um classificador probabilístico fundamentado no teorema de
 Bayes, sob a suposição de independência condicional entre os atributos dado o
@@ -362,11 +369,12 @@ não existe.
 
 O Random Forest é um método de conjunto que combina múltiplas árvores de
 decisão, cada uma treinada sobre uma amostra distinta dos dados e sobre um
-subconjunto aleatório de atributos em cada divisão de nó. Conforme discutem
-\citeonline{gomes2017}, variantes adaptativas desse método para aprendizado em
-stream incorporam mecanismos de detecção de drift internamente ao próprio
-conjunto de árvores, substituindo árvores obsoletas conforme o drift é
-identificado.
+subconjunto aleatório de atributos em cada divisão de nó. Conjuntos de classificadores para stream podem
+integrar algoritmos de detecção de drift e remover ou acrescentar membros
+seletivamente \cite{gomes2017}; no caso do Random Forest, a variante
+adaptativa ARF (Adaptive Random Forest) \cite{gomes2017arf} incorpora
+detectores de drift ao próprio conjunto de árvores, substituindo árvores
+obsoletas conforme o drift é identificado.
 
 O XGBoost (eXtreme Gradient Boosting), por fim, é um método de conjunto baseado em boosting, no qual cada
 nova árvore é treinada para corrigir os erros cometidos pelo conjunto já
@@ -391,20 +399,22 @@ Seção~\ref{sec:estrategias} como a menor distância de Hellinger entre a
 distribuição atual e o repositório de modelos descartados, indica
 recorrência. A magnitude
 da própria estatística de divergência calculada pelo HDDDM, por sua vez, é a
-severidade observada definida na Seção~\ref{sec:severidade}, um indício de
-severidade já demonstrado em detectores de distribuição por
-\citeonline{komorniczak2022}, cuja relevância como variável de resposta é
-sustentada formalmente pelo mesmo estudo sobre boosting adaptativo de
-\citeonline{wang2022elastic} discutido anteriormente. A comparação entre
+severidade observada definida na Seção~\ref{sec:severidade}, grandeza análoga às
+medidas de magnitude do drift calculadas sobre lotes de dados que
+\citeonline{komorniczak2022} usam como base de detecção, e cuja relevância
+para a adaptação é discutida no estudo sobre boosting adaptativo de
+\citeonline{wang2022elastic} citado anteriormente. A comparação entre
 essa severidade observada e a severidade real, calculada por fórmula fechada
 (Seção~\ref{sec:severidade}), é o que sustenta o protocolo exploratório
 descrito na metodologia.
 
 A dimensão conceitual, no entanto, mostra-se mais resistente a essa tradução.
-Conforme reconhecem \citeonline{bayram2022}, o único sinal razoavelmente
-direto para distinguir uma mudança real de uma mudança apenas na distribuição
-das entradas é a taxa de erro do classificador, disponível somente quando
-rótulos verdadeiros chegam em tempo hábil. Como o detector adotado neste
+Como o real drift não é visível a partir da distribuição das entradas,
+as técnicas que o tratam costumam depender do retorno sobre o desempenho
+preditivo \cite{gama2014}; ao mesmo tempo, mudanças na distribuição dos dados
+nem sempre afetam o desempenho do preditor, e os detectores baseados em
+desempenho dependem de que esse retorno, isto é, os rótulos verdadeiros,
+chegue rapidamente \cite{bayram2022}. Como o detector adotado neste
 trabalho pertence à família baseada em distribuição (Seção~\ref{sec:deteccao}),
 esse sinal de erro não integra o mecanismo de detecção, o que mantém a
 dimensão conceitual como uma característica latente, fora do escopo deste

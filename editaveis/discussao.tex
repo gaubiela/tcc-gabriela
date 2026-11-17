@@ -43,17 +43,18 @@ a implementação de referência do HDDDM mostrou o mesmo padrão de detecção
 (Tabela~\ref{tab:validacao-hdddm}), o que indica que esse comportamento não é
 um artefato da implementação usada.
 
-Esse resultado qualifica a premissa de que a adaptação informada por
-detecção é preferível à adaptação cega \cite{gama2014}. Ela se confirmou para
-mudanças abruptas, nas quais a detecção permite reagir no momento certo com
-pouco custo, mas não para mudanças lentas, nas quais um acionamento único,
-mesmo bem posicionado, não acompanha uma distribuição que continua a se
-deslocar.
+Esse resultado relativiza a principal limitação que \citeonline{gama2014}
+atribuem à adaptação cega, a reação lenta à mudança. A vantagem da adaptação
+informada se confirmou para mudanças abruptas, nas quais a detecção permite
+reagir no momento certo com pouco custo, mas não para mudanças lentas, nas
+quais um acionamento único, mesmo bem posicionado, não acompanha uma
+distribuição que continua a se deslocar.
 
 \subsection{Tipo de drift e reaproveitamento de modelos}
 
-Para o drift recorrente, a literatura sugere que reaproveitar modelos
-históricos é mais eficiente que retreinar do zero \cite{sun2018,li2021}. O
+Para o drift recorrente, abordagens da literatura que reaproveitam modelos
+históricos relatam ganhos de acurácia quando conceitos reaparecem
+\cite{sun2018,li2021}. O
 mecanismo de recorrência funcionou como esperado: o repositório identificou
 o modelo correto em todos os retornos detectados. No fatorial principal,
 porém, a reativação não superou o reset, porque todo modelo é treinado sobre
@@ -74,8 +75,8 @@ prejudicial. Sob drift puramente virtual, em que esse conhecimento continua
 válido, o retreinamento incremental, que o preserva, passou a ter o melhor
 rank médio, e as diferenças entre as estratégias diminuíram bastante
 (Tabela~\ref{tab:drift-virtual}). Esse resultado é coerente com a observação
-de \citeonline{oliveira2023} de que estratégias adequadas para real drift são
-subótimas sob virtual drift. Ele mostra também um limite do detector
+de \citeonline{oliveira2023} de que estratégias adequadas para real drift
+podem não ser as mais indicadas sob virtual drift. Ele mostra também um limite do detector
 adotado: como o HDDDM monitora apenas $p(X)$, ele disparou com frequência
 semelhante nos dois cenários e não oferece, por si só, como decidir entre
 descartar e preservar o modelo. Um segundo resultado da análise é que o
@@ -87,8 +88,9 @@ atualização é necessária.
 \subsection{Severidade}
 
 A severidade foi o segundo fator de maior efeito e interagiu com a
-estratégia, em concordância com a observação de \citeonline{wang2022elastic}
-de que a magnitude do drift condiciona a readaptação do modelo. Seu efeito
+estratégia, em concordância com \citeonline{wang2022elastic}, que relacionam a
+severidade do drift ao erro do modelo e à intensidade de adaptação
+necessária. Seu efeito
 mais visível foi ampliar o ganho de todas as estratégias sobre o controle e
 a desvantagem do retreinamento incremental, cujo modelo preserva um
 conhecimento tanto mais prejudicial quanto maior o deslocamento. Não se
@@ -108,9 +110,10 @@ recentes, o que tornou o incremental equivalente ao reset. No Random Forest,
 as árvores novas são minoria diante das árvores treinadas antes do drift, e
 a média das predições permanece dominada pelo conceito antigo. No Naive
 Bayes, as estatísticas acumuladas misturam as duas distribuições. Esse
-resultado reforça, em um desenho controlado, a observação de
-\citeonline{webb2016} e \citeonline{wang2022dynamic} de que um mesmo
-mecanismo de adaptação produz efeitos distintos em classificadores
+resultado reforça, em um desenho controlado, as observações de
+\citeonline{webb2016}, de que classificadores distintos respondem de formas
+distintas a um mesmo drift, e de \citeonline{barddal2016}, de que um mesmo
+mecanismo de adaptação produz ganhos distintos em classificadores
 distintos. Ressalva-se que esse resultado depende das configurações
 adotadas, em particular da proporção entre árvores novas e antigas no Random
 Forest, que não foram otimizadas.
@@ -126,11 +129,11 @@ devem ser lidos com cautela, porque o desenho os favorece: a severidade
 assume apenas três valores bem separados, o que eleva a correlação, e, no
 padrão recorrente, o retorno ao estado anterior é exato, o que torna a
 recorrência fácil de reconhecer. Ainda assim, indicam que parte do
-entendimento do drift, componente que \citeonline{lu2018} apontam como o
-menos desenvolvido da área, pode ser extraída de um detector baseado em
-distribuição sem uso de rótulos, em linha com a proposta de usar a própria
-estatística do detector como aproximação da severidade
-\cite{komorniczak2022}.
+entendimento do drift, componente no qual, segundo \citeonline{lu2018}, poucos
+métodos respondem como e onde a mudança ocorre, pode ser extraída de um
+detector baseado em distribuição sem uso de rótulos, em linha com o uso de
+medidas de magnitude do drift calculadas sobre lotes de dados como sinal de
+detecção \cite{komorniczak2022}.
 
 A orientação construída a partir desses sinais, quando avaliada apenas pela
 acurácia, não superou a política fixa de sempre usar a janela deslizante,
@@ -162,8 +165,10 @@ que um detector baseado apenas em $p(X)$ não revela. A quarta é que a
 estatística do detector, já calculada para fins de monitoramento, carrega
 informação útil sobre a severidade, a velocidade e a recorrência do drift e
 pode ser registrada junto com cada alerta a custo praticamente nulo,
-oferecendo uma base observável para os critérios de resposta que
-\citeonline{kreuzberger2023} apontam como ausentes nos pipelines atuais.
+oferecendo uma base observável para escolher entre os gatilhos de
+retreinamento que \citeonline{kreuzberger2023} descrevem (limiares
+estatísticos, chegada de novos dados ou agendamento periódico), para os quais
+não são especificados critérios de escolha.
 
 \section{Ameaças à Validade}
 \label{sec:ameacas}
