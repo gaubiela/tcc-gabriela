@@ -11,7 +11,7 @@ Notebook do experimento fatorial descrito no Capítulo 2 (Metodologia).
    - `figuras/`: figuras em PDF e PNG;
    - `tabelas/`: tabelas LaTeX prontas para `\input`.
 
-A execução completa (180 condições × 10 repetições, mais a análise de sensibilidade e as análises complementares de janela de treino, drift virtual, orçamento e validação do detector) leva cerca de 40 minutos no Colab. As sementes são fixas, portanto os resultados são reprodutíveis.
+A execução completa (180 condições × 10 repetições, mais a análise de sensibilidade e as análises complementares de janela de treino, drift virtual, orçamento, validação do detector e rótulos atrasados) leva cerca de uma hora no Colab. As sementes são fixas, portanto os resultados são reprodutíveis.
 
 ## Organização no repositório
 

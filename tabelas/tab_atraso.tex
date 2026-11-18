@@ -1,0 +1,31 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift média com rótulos atrasados em $d$ blocos}
+\label{tab:atraso}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{clrrrrr}
+\toprule
+$d$ & Tipo & Reset & Janela & Incremental & Reativação & Controle \\
+\midrule
+0 & Abrupto & 0,860 & 0,869 & 0,778 & 0,860 & 0,618 \\
+ & Gradual & 0,771 & 0,864 & 0,732 & 0,771 & 0,654 \\
+ & Incremental & 0,748 & 0,861 & 0,704 & 0,748 & 0,644 \\
+ & Recorrente & 0,841 & 0,844 & 0,782 & 0,838 & 0,705 \\
+2 & Abrupto & 0,839 & 0,837 & 0,763 & 0,839 & 0,618 \\
+ & Gradual & 0,762 & 0,850 & 0,725 & 0,761 & 0,654 \\
+ & Incremental & 0,732 & 0,836 & 0,695 & 0,733 & 0,644 \\
+ & Recorrente & 0,805 & 0,800 & 0,758 & 0,817 & 0,705 \\
+4 & Abrupto & 0,818 & 0,824 & 0,748 & 0,818 & 0,618 \\
+ & Gradual & 0,751 & 0,828 & 0,716 & 0,750 & 0,654 \\
+ & Incremental & 0,720 & 0,813 & 0,688 & 0,720 & 0,644 \\
+ & Recorrente & 0,769 & 0,762 & 0,734 & 0,796 & 0,705 \\
+8 & Abrupto & 0,776 & 0,778 & 0,719 & 0,777 & 0,618 \\
+ & Gradual & 0,726 & 0,783 & 0,699 & 0,725 & 0,654 \\
+ & Incremental & 0,698 & 0,766 & 0,674 & 0,698 & 0,644 \\
+ & Recorrente & 0,697 & 0,690 & 0,689 & 0,748 & 0,705 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Médias sobre severidades, classificadores e 10 repetições, com janela de treino de um bloco. $d$ = 0 corresponde ao fatorial principal.}
+\end{table}
