@@ -20,8 +20,10 @@ of the transition, but it retrained about four times as often; with the
 same number of retraining runs, full reset was more effective under abrupt
 and recurring drift. Complementary analyses showed that historical model
 reactivation outperforms full reset when the archived model was trained on
-more data, and that incremental retraining, whose effectiveness depended on
-the classifier, becomes the best strategy under purely virtual drift. As an exploratory extension, the detector's
+more data or when labels arrive with a delay, that incremental retraining,
+whose effectiveness depended on the classifier, becomes the best strategy
+under purely virtual drift, and that label delay mainly reduces the sliding
+window's advantage. As an exploratory extension, the detector's
 observable signals estimated the drift's severity (Spearman correlation of
 0.90), speed (AUC of 0.97), and recurrence well; a guideline built from them
 outperformed always applying full reset, but not, in accuracy, a fixed

@@ -20,7 +20,8 @@ vezes mais: com o mesmo número de retreinamentos, o reset completo foi mais
 eficaz sob drift abrupto e recorrente, e a janela, sob drift gradual e
 incremental. A reativação de modelos históricos identificou corretamente as
 recorrências e superou o reset quando o modelo arquivado havia sido treinado
-com mais dados; o retreinamento incremental dependeu fortemente do
+com mais dados ou quando os rótulos chegavam com atraso, situação em que foi
+a estratégia mais eficaz sob drift recorrente; o retreinamento incremental dependeu fortemente do
 classificador no fatorial principal e passou a ser a estratégia mais eficaz
 sob drift puramente virtual, em que o conhecimento anterior continua válido.
 
@@ -40,9 +41,9 @@ que a comparação entre estratégias de retreinamento depende do número de
 retreinamentos considerado, e de que, com custo igual, o acionamento por
 detecção é mais eficiente para mudanças abruptas e o retreinamento agendado,
 para mudanças lentas; (iii) evidência de que a vantagem da atualização
-incremental e da reativação de modelos depende, respectivamente, de o
-conhecimento anterior continuar válido e de o modelo histórico ter sido
-treinado com mais dados do que os disponíveis após a mudança; e (iv) a
+incremental depende de o conhecimento anterior continuar válido, e a da
+reativação de modelos, de o modelo histórico ter sido treinado com mais dados
+do que os disponíveis após a mudança ou de os rótulos chegarem com atraso; e (iv) a
 indicação de que a estatística de um detector baseado em distribuição, sem
 uso de rótulos, carrega informação sobre a severidade, a velocidade e a
 recorrência do drift.
@@ -51,11 +52,11 @@ recorrência do drift.
 
 Os limites discutidos na Seção~\ref{sec:ameacas} apontam os desdobramentos
 mais diretos. O primeiro é replicar o experimento com dados reais e com os
-conjuntos de referência usados pelo estudo de base \cite{rocha2026}, com
+conjuntos de referência da literatura, como Insects, SEA e STAGGER, com
 atributos correlacionados e transições de duração variável. O segundo é
-considerar rótulos com atraso, hipótese mais realista para produção e que
-deve penalizar as estratégias que dependem de rótulos contínuos, como a
-janela deslizante. O terceiro é incluir os demais detectores baseados em
+considerar atrasos de rótulo variáveis e rótulos disponíveis para apenas
+parte das instâncias, cenários mais próximos da produção do que os atrasos
+fixos avaliados aqui. O terceiro é incluir os demais detectores baseados em
 distribuição (JSDDM e KSDDM) e estratégias híbridas, que combinem
 acionamento por detecção com retreinamento agendado ou que continuem
 retreinando após uma detecção até a estabilização da divergência. O quarto é

@@ -20,8 +20,10 @@ mas retreinou cerca de quatro vezes mais; com o mesmo número de
 retreinamentos, o reset completo foi mais eficaz sob drift abrupto e
 recorrente. Análises complementares mostraram que a reativação de modelos
 históricos supera o reset quando o modelo arquivado foi treinado com mais
-dados, e que o retreinamento incremental, cuja eficácia dependeu do
-classificador, passa a ser a melhor estratégia sob drift puramente virtual.
+dados ou quando os rótulos chegam com atraso, que o retreinamento
+incremental, cuja eficácia dependeu do classificador, passa a ser a melhor
+estratégia sob drift puramente virtual, e que o atraso dos rótulos reduz
+sobretudo a vantagem da janela deslizante.
 Como desdobramento exploratório, os sinais observáveis do detector
 estimaram bem a severidade (correlação de Spearman de 0,90), a velocidade
 (AUC de 0,97) e a recorrência do drift; a orientação construída a partir

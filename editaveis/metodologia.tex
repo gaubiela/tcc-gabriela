@@ -339,7 +339,7 @@ limiar do HDDDM, o fatorial é repetido variando cada um isoladamente.
 
 \section{Análises Complementares}
 \label{sec:complementares}
-O fatorial principal faz três escolhas de projeto que favorecem algumas
+O fatorial principal faz quatro escolhas de projeto que favorecem algumas
 estratégias por construção. Primeiro, todos os treinos usam um único bloco,
 de modo que o reset completo, a janela deslizante e a reativação produzem
 modelos treinados com a mesma quantidade de dados e diferem apenas no
@@ -347,9 +347,12 @@ momento em que treinam. Segundo, como a fronteira de decisão acompanha os
 dados, todo drift combina componentes reais e virtuais, e o conhecimento
 anterior à mudança é sempre prejudicial, o que penaliza as estratégias que
 o preservam. Terceiro, a janela deslizante dispõe de mais retreinamentos que
-as estratégias acionadas por detecção. Para verificar em que medida as
-conclusões dependem dessas escolhas, três análises complementares variam cada
-uma delas isoladamente, mantendo todo o restante do desenho:
+as estratégias acionadas por detecção. Quarto, os rótulos de cada bloco ficam
+disponíveis imediatamente após o teste, hipótese otimista para produção e
+que favorece as estratégias que mais dependem de rótulos. Para verificar em
+que medida as conclusões dependem dessas escolhas, quatro análises
+complementares variam cada uma delas isoladamente, mantendo todo o restante
+do desenho:
 
 \begin{itemize}
   \item \textbf{Janela de treino}: o fatorial é repetido com janelas de
@@ -365,7 +368,16 @@ uma delas isoladamente, mantendo todo o restante do desenho:
   \item \textbf{Orçamento de retreinamentos}: a partir da análise de
   sensibilidade, compara-se a janela deslizante e o reset completo em
   configurações com taxas de acionamento semelhantes, de modo que a
-  comparação não seja influenciada pelo número de retreinamentos.
+    comparação não seja influenciada pelo número de retreinamentos.
+  \item \textbf{Rótulos atrasados}: o fatorial é repetido com os rótulos do
+  bloco $t$ disponíveis apenas no bloco $t + d$, com $d$ igual a dois, quatro
+  e oito blocos (800, 1.600 e 3.200 instâncias). A detecção e a troca de
+  modelo da reativação não usam rótulos e continuam imediatas; os treinos das
+  estratégias acionadas por detecção aguardam os rótulos do bloco em que a
+  mudança foi detectada; e a janela deslizante, em cada bloco agendado,
+  treina com o bloco rotulado mais recente. Como a vantagem da reativação
+  depende de modelos treinados com mais dados, a combinação de atraso de
+  quatro blocos com janela de treino de quatro blocos também é avaliada.
 \end{itemize}
 
 Por fim, como o HDDDM foi implementado especificamente para este trabalho,
@@ -404,16 +416,17 @@ os seus episódios, essa avaliação mede a qualidade do mapeamento entre
 sinais e estratégias, e não a de uma política online que trocaria de
 estratégia a cada episódio.
 
-Esse protocolo exploratório responde diretamente às limitações de um estudo
-de base que orientou as escolhas deste trabalho. \citeonline{rocha2026}
-propõe uma arquitetura conceitual de monitoramento de drift e avalia
-empiricamente os três detectores de distribuição adotados aqui (HDDDM,
-JSDDM e KSDDM), mas usando um único classificador (Naive Bayes), uma única
+Esse desenho difere de avaliações que fixam o classificador e a resposta ao
+drift e variam o detector, como a de \citeonline{rocha2026}, que propõe uma
+arquitetura conceitual de monitoramento de drift e avalia empiricamente três
+detectores de distribuição (HDDDM, JSDDM e KSDDM) usando um único
+classificador (Naive Bayes), uma única
 política de retreinamento (atualização incremental enquanto não há drift e
 reset completo quando ele é detectado) e processamento em batch, sem
 nunca medir a severidade do drift nem investigar a interação entre tipo de
 drift, classificador e estratégia. O desenho fatorial deste trabalho
-(Seção~\ref{sec:fatorial}) estende essa avaliação exatamente nos pontos que
-o estudo de base deixa em aberto, e o protocolo exploratório descrito acima
-é o que permite verificar se essa extensão também se sustenta fora das
-condições controladas do experimento.
+(Seção~\ref{sec:fatorial}) faz o movimento inverso: fixa o detector e varia
+o tipo e a severidade do drift, o classificador e a estratégia; o protocolo
+exploratório descrito acima permite verificar se as conclusões obtidas sob
+condições controladas oferecem alguma orientação quando o tipo e a severidade
+reais não são conhecidos.

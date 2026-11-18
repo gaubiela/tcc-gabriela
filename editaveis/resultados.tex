@@ -232,7 +232,7 @@ com a cadência principal.
 \label{sec:res_complementares}
 
 As análises desta seção verificam se os resultados anteriores se mantêm
-quando se alteram as três escolhas de projeto descritas na
+quando se alteram as quatro escolhas de projeto descritas na
 Seção~\ref{sec:complementares} e quando se troca a implementação do
 detector.
 
@@ -320,6 +320,38 @@ implementações: as transições graduais foram as menos detectadas (63,3\% e
 66,7\%), e as abruptas e recorrentes, as mais detectadas.
 
 \input{tabelas/tab_validacao_hdddm}
+
+\subsection{Rótulos atrasados}
+
+O atraso dos rótulos reduziu a acurácia de todas as estratégias que
+retreinam, e reduziu mais a da janela deslizante
+(Tabela~\ref{tab:atraso}). Em relação ao fatorial principal, a acurácia
+média da janela caiu 0,029, 0,053 e 0,105 com atrasos de dois, quatro e oito
+blocos; a do reset completo, 0,020, 0,040 e 0,081; a da reativação, 0,017,
+0,033 e 0,067; e a do incremental, 0,014, 0,027 e 0,053. A janela continuou
+com a maior acurácia média em todos os atrasos (0,831, 0,807 e 0,755), mas
+sua vantagem sobre o reset diminuiu de 0,055 sem atraso para 0,030 com atraso
+de oito blocos, e, no padrão abrupto, as duas estratégias praticamente
+empataram a partir de dois blocos de atraso.
+
+\input{tabelas/tab_atraso}
+
+O padrão recorrente foi o mais afetado e o único em que a ordenação mudou.
+Com qualquer atraso, a reativação passou a ser a estratégia de maior
+acurácia nesse padrão (0,817, 0,796 e 0,748, contra 0,800, 0,762 e 0,690 da
+janela), mesmo com janela de treino de um bloco, porque a troca pelo modelo
+arquivado não depende de rótulos e ocorre no momento da detecção, enquanto
+as demais estratégias retreinam apenas quando os rótulos chegam. Com atraso
+de oito blocos, a janela deslizante e o reset completo ficaram abaixo do
+próprio modelo sem retreinamento (0,690 e 0,697, contra 0,705): os rótulos
+disponíveis no momento do retreinamento pertenciam, com frequência, ao estado
+anterior da stream. Considerando todas as combinações de tipo, severidade e
+classificador, a reativação foi a melhor estratégia em 7, 10 e 10 das 36
+combinações com atrasos de dois, quatro e oito blocos, contra nenhuma no
+fatorial principal. Com janela de treino de quatro blocos e atraso de quatro
+blocos, a reativação superou tanto o reset (diferença média de 0,049;
+$p < 0{,}001$) quanto a janela deslizante (0,010; $p = 0{,}033$) no padrão
+recorrente.
 
 \section{Sinais Observáveis e Orientação Preliminar}
 \label{sec:res_derivada}

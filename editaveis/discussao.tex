@@ -15,8 +15,9 @@ cada estratégia pode fazer.
 No fatorial principal, a janela deslizante foi a mais eficaz em quase todas
 as condições, e as variáveis do drift determinaram sobretudo quanto as
 estratégias acionadas por detecção ficaram atrás dela. Esse resultado se
-manteve com janelas de treino maiores (Tabela~\ref{tab:janela-treino}), mas
-não com o número de retreinamentos igualado (Tabela~\ref{tab:orcamento}).
+manteve com janelas de treino maiores (Tabela~\ref{tab:janela-treino}),
+enfraqueceu-se com rótulos atrasados (Tabela~\ref{tab:atraso}) e não se
+manteve com o número de retreinamentos igualado (Tabela~\ref{tab:orcamento}).
 Com cerca de um acionamento a cada dezesseis blocos para ambas, o reset
 completo superou a janela nos padrões abrupto e recorrente, e a janela
 superou o reset nos padrões gradual e incremental. A leitura mais precisa
@@ -65,7 +66,14 @@ treinado com quatro ou oito blocos, a reativação passou a superar o reset no
 padrão recorrente, em 0,034 e 0,047. A vantagem da reativação depende,
 portanto, de o modelo histórico ter sido treinado com mais dados do que os
 disponíveis logo após a mudança, condição comum em produção, em que o modelo
-em uso costuma ter sido treinado com um histórico longo.
+em uso costuma ter sido treinado com um histórico longo. A análise com
+rótulos atrasados revelou uma segunda condição, independente da primeira:
+como a troca pelo modelo arquivado não depende de rótulos, a reativação
+reage no momento da detecção, enquanto as demais estratégias precisam
+esperar os rótulos do novo estado. Com qualquer atraso, ela foi a estratégia
+mais eficaz no padrão recorrente, mesmo com janela de treino de um bloco, e,
+com atraso de oito blocos, foi a única que superou o modelo sem
+retreinamento nesse padrão.
 
 \subsection{Natureza do drift e preservação do conhecimento}
 
@@ -150,7 +158,7 @@ avaliada como política em tempo real em trabalhos futuros.
 
 \section{Implicações para Pipelines de MLOps}
 
-Quatro implicações práticas decorrem dos resultados, ressalvados os limites
+Cinco implicações práticas decorrem dos resultados, ressalvados os limites
 discutidos na seção seguinte. A primeira é que retreinar com mais frequência
 melhora a acurácia, mas o ganho deve ser comparado ao custo: com o mesmo
 número de retreinamentos, o acionamento por detecção é mais eficiente para
@@ -161,7 +169,11 @@ a detecção até que a divergência se estabilize, ou combinar a detecção com
 retreinamentos agendados, são alternativas sugeridas pelos resultados. A
 terceira é que a escolha entre atualizar e substituir um modelo deve
 considerar o classificador e, sempre que possível, a natureza do drift,
-que um detector baseado apenas em $p(X)$ não revela. A quarta é que a
+que um detector baseado apenas em $p(X)$ não revela. A quarta é que, quando
+os rótulos demoram a chegar, respostas que não dependem deles, como a troca
+por um modelo arquivado, ganham valor, e retreinar com os rótulos mais
+recentes disponíveis pode ser pior do que não retreinar, se esses rótulos
+ainda pertencem ao estado anterior. A quinta é que a
 estatística do detector, já calculada para fins de monitoramento, carrega
 informação útil sobre a severidade, a velocidade e a recorrência do drift e
 pode ser registrada junto com cada alerta a custo praticamente nulo,
@@ -179,12 +191,14 @@ linear e transições de duração fixa. A independência entre atributos é
 também o que permite expressar a severidade observada como
 $1 - \prod_k \widehat{BC}_k$. Os resultados não se transferem
 automaticamente para dados reais, com atributos correlacionados, desbalanço
-de classes e transições de duração variável; o estudo de base
-\cite{rocha2026}, por exemplo, usa conjuntos de dados reais e sintéticos de
-referência que não foram considerados aqui. Um único detector foi avaliado,
-ainda que em duas implementações. Além disso, os rótulos de cada bloco ficam
-disponíveis imediatamente após o teste, hipótese otimista para produção e
-que favorece a janela deslizante, a estratégia que mais depende de rótulos.
+de classes e transições de duração variável, como os conjuntos de
+referência Insects, SEA e STAGGER, usados em avaliações de detectores de
+drift como a de \citeonline{rocha2026}, que não foram considerados aqui. Um único detector foi avaliado,
+ainda que em duas implementações. No fatorial principal, os rótulos de cada
+bloco ficam disponíveis imediatamente após o teste; a análise com rótulos
+atrasados confirmou que essa hipótese favorece a janela deslizante, mas
+considerou apenas atrasos fixos e conhecidos, e não atrasos variáveis ou
+rótulos disponíveis para apenas parte das instâncias.
 
 \textbf{Validade interna.} Várias escolhas de projeto afetam os resultados.
 O tamanho da janela de treino, a natureza do drift, a cadência da janela e o
