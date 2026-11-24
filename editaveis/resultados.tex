@@ -67,14 +67,23 @@ cada linha, excluído o controle.}
 \label{fig:heatmap}
 \end{figure}
 
-A janela deslizante foi a melhor estratégia em 29 das 36 combinações. As
-exceções concentram-se em dois casos: o drift abrupto de severidade alta,
-no qual o reset completo foi a melhor estratégia para os três
-classificadores, e o drift recorrente de severidade média, no qual o reset
-também superou a janela para os três classificadores; além disso, com o
-XGBoost, o retreinamento incremental foi o melhor sob drift recorrente de
-severidade baixa. Em todas as exceções, as diferenças em relação à janela
-são pequenas, de no máximo 0,018.
+A janela deslizante teve a maior acurácia média em 29 das 36 combinações.
+As exceções concentram-se em dois casos: o drift abrupto de severidade alta
+e o drift recorrente de severidade média, nos quais o reset completo teve a
+maior média para os três classificadores; além disso, com o XGBoost, o
+retreinamento incremental teve a maior média sob drift recorrente de
+severidade baixa, 0,001 acima da janela. Em todas as exceções, as diferenças
+em relação à janela são pequenas, de no máximo 0,018, e nem todas se repetem
+entre as repetições (Tabela~\ref{tab:reset-vs-janela}). No drift abrupto de
+severidade alta, a vantagem do reset é pequena (0,011 em média), mas
+consistente: ele superou a janela em 9 das 10 repetições, com $p < 0{,}05$
+para cada classificador. No drift recorrente de severidade média, ao
+contrário, o reset superou a janela em apenas 7 das 10 repetições, com
+grande variação entre elas, e a diferença não foi significativa
+($p \approx 0{,}27$); nessa combinação, as duas estratégias não se
+distinguem.
+
+\input{tabelas/tab_reset_vs_janela}
 
 \subsection{Efeito do tipo de drift}
 
@@ -88,10 +97,27 @@ blocos. Sob drift gradual e incremental, as estratégias reativas retreinam
 assim que o HDDDM sinaliza a mudança, ainda no início da transição; o modelo
 resultante é treinado sobre uma distribuição intermediária e, como o
 detector costuma disparar uma única vez durante a transição (em 31 das 42
-streams lentas com alguma detecção nesse intervalo), esse modelo permanece em
+streams lentas com alguma detecção nesse intervalo, contando todas as
+detecções, e não apenas a primeira de cada episódio), esse modelo permanece em
 uso depois que a transição termina. A
 janela deslizante, por retreinar em cadência fixa, acompanha a transição até
 o fim.
+
+Retreinar cedo demais, porém, explica apenas parte da diferença. A
+Tabela~\ref{tab:reset-lentas} separa as 60 streams graduais e incrementais
+conforme o momento da detecção. Em 40 delas, o HDDDM sinalizou a mudança
+durante a transição, em média 1,7 bloco após o seu início; nessas, o reset
+ficou 0,072 abaixo da janela, e o detector ideal reduziria essa diferença
+para 0,022. Em 19 streams, o detector não sinalizou a transição; nessas, o
+reset praticamente não retreinou, ficou próximo do modelo sem retreinamento
+(0,693 contra 0,686) e 0,174 abaixo da janela. Da diferença total de 0,103
+entre a janela e o reset nos padrões lentos, 0,048 vem das streams em que a
+detecção ocorreu durante a transição e 0,055 das streams sem detecção: a
+desvantagem do reset nas mudanças lentas decorre em partes semelhantes de
+retreinar cedo demais e de não detectar a mudança. As streams sem detecção
+concentram-se na severidade baixa (10 das 20) e média (7 das 20).
+
+\input{tabelas/tab_reset_lentas}
 
 \begin{figure}[htbp]
 \centering
@@ -155,7 +181,19 @@ severidade (0,439), das interações tipo $\times$ estratégia (0,323) e
 severidade $\times$ estratégia (0,311), do tipo (0,308) e da interação
 classificador $\times$ estratégia (0,189). As três interações com a
 estratégia confirmam que a eficácia relativa das estratégias depende do tipo
-e da severidade do drift e do classificador. A interação tripla tipo
+e da severidade do drift e do classificador.
+
+Parte desses efeitos, no entanto, vem do controle, cujo desempenho muito
+inferior amplia as diferenças entre estratégias e cresce com a severidade.
+Repetida sem o controle (Tabela~\ref{tab:anova-sem-controle}, no
+Apêndice~\ref{ap:tabelas}), a ANOVA mantém a estratégia como o fator de
+maior efeito ($\eta^2_p = 0{,}577$) e preserva as interações tipo $\times$
+estratégia (0,272) e classificador $\times$ estratégia (0,234), mas reduz
+bastante o efeito da severidade (de 0,439 para 0,194) e da interação
+severidade $\times$ estratégia (de 0,311 para 0,132). Entre as quatro
+estratégias de retreinamento, portanto, o tipo de drift e o classificador
+importam mais do que a severidade; a severidade condiciona sobretudo quanto
+o modelo sem retreinamento se degrada. A interação tripla tipo
 $\times$ severidade $\times$ estratégia também foi significativa, mas com
 efeito menor (0,090), e as interações de quarta ordem e tipo $\times$
 severidade $\times$ classificador não foram significativas.
@@ -177,9 +215,10 @@ correção de Holm, exceto entre o reset completo e a reativação ($p = 0{,}118
 
 A vantagem da janela deslizante tem um custo (Tabela~\ref{tab:custo}). Com
 cadência de quatro blocos, a janela retreinou 9,7 vezes por stream, contra
-2,2 vezes do reset completo, e seu tempo total de treino foi cerca de 4,4
-vezes maior (0,235~s contra 0,054~s por stream, em média; por serem medidos
-em tempo de relógio, esses valores variam ligeiramente entre execuções). Em
+2,2 vezes do reset completo, e seu tempo total de treino foi cerca de quatro
+vezes maior (0,160~s contra 0,037~s por stream, em média, na execução que
+gerou a Tabela~\ref{tab:custo}; por serem medidos em tempo de relógio, esses
+valores variam entre execuções, mas a razão entre eles se mantém). Em
 contrapartida, foi a única estratégia que recuperou a acurácia pré-drift em
 todas as transições, em média 659 instâncias após o fim da transição. O
 reset completo recuperou em 67,9\% das transições: em 90\% das transições

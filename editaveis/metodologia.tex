@@ -68,9 +68,12 @@ drift se degrada em proporção à severidade; a distinção entre real drift e
 virtual drift permanece, como discutido na Seção~\ref{sec:deteccao}, fora do
 alcance do detector. O drift atua apenas no subespaço formado pelos dois
 primeiros atributos, enquanto os demais permanecem estáveis. Cada stream tem
-16.000 instâncias, processadas em blocos de 400 (40 blocos); o drift tem
-início na instância 6.400, e os padrões gradual e incremental usam uma janela
-de transição de 2.400 instâncias.
+16.000 instâncias, processadas em blocos de 400 (40 blocos). Nos padrões
+abrupto, gradual e incremental, o drift tem início na instância 6.400 (bloco
+16), e os padrões gradual e incremental usam uma janela de transição de 2.400
+instâncias (seis blocos), terminando na instância 8.800; no padrão
+recorrente, as três transições ocorrem nas instâncias 4.000, 8.000 e 12.000
+(blocos 10, 20 e 30).
 Sobre essa base, os quatro padrões temporais definidos na
 Seção~\ref{sec:dimensoes} são operacionalizados como segue, todos
 parametrizados pelo mesmo deslocamento padronizado $\Delta/\sigma$ associado
@@ -295,6 +298,7 @@ incremental, reativação de modelos históricos, sem retreinamento
 \end{table}
 
 \section{Métricas de Avaliação}
+\label{sec:metricas}
 A eficácia de cada estratégia é avaliada por acurácia prequential, o
 protocolo de teste-então-treino descrito por \citeonline{gama2014} para
 avaliação em stream, que preserva a ordem temporal das instâncias, calculada
@@ -313,6 +317,21 @@ a acurácia de um bloco volte a ficar a até 3 pontos percentuais da acurácia
 média pré-drift; quando isso não ocorre antes da transição seguinte ou do
 fim da stream, o valor é censurado nesse limite. A taxa de acionamento é o
 número de treinos ou reativações por bloco.
+
+O desempenho do detector é avaliado por transição injetada. Uma transição é
+considerada detectada quando o HDDDM sinaliza drift dentro de uma janela de
+tolerância que vai do bloco em que a transição começa até o terceiro bloco
+após o seu fim; nas transições abruptas, que começam e terminam no mesmo
+bloco, a janela tem quatro blocos, e nas graduais e incrementais, dez. O
+atraso de detecção é o número de blocos entre o início da transição e a
+detecção. Os sinais observáveis são associados à transição pelo primeiro
+episódio de detecção (Seção~\ref{sec:config_detector}) que começa dentro
+dessa janela; como um episódio ocupa oito blocos, uma detecção que ocorra
+nos oito blocos seguintes a outra não abre um novo episódio. Na comparação
+entre implementações do HDDDM (Seção~\ref{sec:complementares}), conta-se
+qualquer detecção dentro da janela, o que torna as taxas ali ligeiramente
+maiores. Os falsos alarmes são as detecções nos blocos anteriores à primeira
+transição.
 
 \section{Análise Estatística}
 \label{sec:analise_estatistica}
@@ -333,9 +352,15 @@ Como as estratégias reativas dependem das detecções do HDDDM, uma análise
 complementar separa o efeito da estratégia do efeito do detector: o reset
 completo, o retreinamento incremental e a reativação são executados também
 com um detector ideal, que aciona a estratégia uma única vez, no primeiro
-bloco após o fim de cada transição verdadeira. Para avaliar a robustez das conclusões a dois parâmetros
-de projeto, a cadência da janela deslizante e o parâmetro $\gamma$ do
-limiar do HDDDM, o fatorial é repetido variando cada um isoladamente.
+bloco após o fim de cada transição verdadeira; essa análise usa as mesmas
+120 streams e as mesmas dez repetições do fatorial principal. Para avaliar a
+robustez das conclusões a dois parâmetros de projeto, a cadência da janela
+deslizante (dois, quatro, oito e dezesseis blocos) e o parâmetro $\gamma$ do
+limiar do HDDDM (1,5, 2 e 2,5), o fatorial é repetido variando cada um
+isoladamente, com cinco repetições por condição, correspondentes às cinco
+primeiras sementes do fatorial principal. Por fim, a ANOVA é repetida sem a
+condição de controle, para verificar se o desempenho muito inferior do
+modelo sem retreinamento infla os efeitos estimados.
 
 \section{Análises Complementares}
 \label{sec:complementares}
@@ -385,14 +410,18 @@ suas detecções são comparadas, nas mesmas 120 streams do fatorial principal,
 com as da implementação de referência do pacote
 \texttt{menelaus}\footnote{Disponível em
 \url{https://github.com/mitre/menelaus}.}, configurada com a mesma variante
-de limiar e o mesmo valor de $\gamma$.
+de limiar e o mesmo valor de $\gamma$. As análises de janela de treino, de
+drift virtual, de rótulos atrasados e de validação do detector usam as
+mesmas sementes e as mesmas dez repetições do fatorial principal; a de
+orçamento reaproveita a análise de sensibilidade e, portanto, tem cinco
+repetições por condição.
 
 \section{Protocolo de Validação da Questão Derivada}
 Para responder à questão derivada, cada condição do experimento fatorial
 registra, além da eficácia da estratégia, os três sinais observáveis
 definidos na Seção~\ref{sec:sinais}: a severidade observada pelo HDDDM,
 comparada à severidade real conhecida por injeção (Seção~\ref{sec:severidade});
-a velocidade de variação da divergência entre janelas sucessivas, comparada
+a velocidade de variação da divergência entre blocos sucessivos, comparada
 ao padrão temporal real da condição; e a semelhança com distribuições
 históricas, comparada à ocorrência real de recorrência. A concordância entre
 cada sinal observável e a característica real correspondente é analisada
@@ -416,17 +445,25 @@ os seus episódios, essa avaliação mede a qualidade do mapeamento entre
 sinais e estratégias, e não a de uma política online que trocaria de
 estratégia a cada episódio.
 
-Esse desenho difere de avaliações que fixam o classificador e a resposta ao
-drift e variam o detector, como a de \citeonline{rocha2026}, que propõe uma
-arquitetura conceitual de monitoramento de drift e avalia empiricamente três
-detectores de distribuição (HDDDM, JSDDM e KSDDM) usando um único
-classificador (Naive Bayes), uma única
-política de retreinamento (atualização incremental enquanto não há drift e
-reset completo quando ele é detectado) e processamento em batch, sem
-nunca medir a severidade do drift nem investigar a interação entre tipo de
-drift, classificador e estratégia. O desenho fatorial deste trabalho
-(Seção~\ref{sec:fatorial}) faz o movimento inverso: fixa o detector e varia
-o tipo e a severidade do drift, o classificador e a estratégia; o protocolo
-exploratório descrito acima permite verificar se as conclusões obtidas sob
-condições controladas oferecem alguma orientação quando o tipo e a severidade
-reais não são conhecidos.
+\section{Implementação e Disponibilidade}
+\label{sec:disponibilidade}
+O experimento foi implementado em Python, em um único notebook executável no
+Google Colab, que gera as streams, executa o detector, os classificadores e
+as estratégias, realiza as análises estatísticas e produz todas as tabelas e
+figuras dos Capítulos~\ref{chap:resultados} e~\ref{chap:discussao} e do
+Apêndice~\ref{ap:tabelas}. Os resultados apresentados foram obtidos com
+Python 3.13, NumPy 2.5.3, pandas 3.0.5, SciPy 1.18.1, scikit-learn 1.9.1,
+XGBoost 3.4.1, statsmodels 0.15.0, joblib 1.6.0, matplotlib 3.11.2 e
+menelaus 0.2.0. Todas as sementes aleatórias são fixas: a semente de cada
+stream é determinada pelo tipo, pela severidade e pela repetição, e as
+quinze execuções de uma repetição usam a mesma stream. Com essas versões,
+uma nova execução reproduz os resultados de forma idêntica.
+
+O notebook, os dados gerados (resultados por execução, sinais do detector e
+resultados das análises complementares, em CSV), as tabelas em \LaTeX{} e as
+figuras estão disponíveis no repositório
+\url{https://github.com/gaubiela/tcc-gabriela}, na versão marcada como
+\texttt{v1.0}. O arquivo \texttt{experimento/README.md} descreve a
+organização do repositório e como executar o notebook; a execução completa
+leva cerca de uma hora no Colab, e a Tabela~\ref{tab:anova}, por exemplo, é
+gerada na Seção~7.1 do notebook.

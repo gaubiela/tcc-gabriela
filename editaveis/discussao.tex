@@ -5,10 +5,12 @@
 
 A questão principal deste trabalho pergunta como a eficácia das estratégias
 de retreinamento varia em função do tipo e da severidade do drift e do
-classificador monitorado. As três variáveis importam: as interações da
-estratégia com o tipo, com a severidade e com o classificador foram todas
-significativas e com efeitos de magnitude relevante
-(Tabela~\ref{tab:anova}). A forma como importam, porém, depende de uma
+classificador monitorado. As três variáveis importam, mas não na mesma
+medida: as interações da estratégia com o tipo, com a severidade e com o
+classificador foram todas significativas (Tabela~\ref{tab:anova}), e, entre
+as quatro estratégias de retreinamento, isto é, sem o controle, o tipo e o
+classificador pesam mais do que a severidade
+(Tabela~\ref{tab:anova-sem-controle}). A forma como importam, porém, depende de uma
 condição que o fatorial principal não fixa: o número de retreinamentos que
 cada estratégia pode fazer.
 
@@ -26,6 +28,22 @@ em boa parte de ela retreinar cerca de quatro vezes mais; quando o custo é o
 mesmo, nenhuma estratégia domina, e o tipo de drift passa a decidir qual é a
 mais eficaz.
 
+Quanto à premissa de que a estratégia de resposta deveria depender das
+características do drift e do classificador, os resultados a sustentam
+apenas em parte. Ela não se sustenta quando retreinar é barato e os rótulos
+chegam de imediato: nessa situação, uma política fixa, a janela deslizante
+com cadência curta, foi a melhor ou quase a melhor escolha em praticamente
+todas as condições, e conhecer o tipo e a severidade do drift acrescentou
+pouco. Ela se sustenta quando o número de retreinamentos é limitado, quando
+os rótulos demoram a chegar ou quando a natureza do drift muda: com custo
+igual, o reset completo foi preferível sob drift abrupto e recorrente e a
+janela, sob drift lento; com rótulos atrasados, a reativação foi preferível
+sob drift recorrente; sob drift puramente virtual, o incremental obteve o
+melhor desempenho; e, em todas as condições, a eficácia do incremental
+dependeu do classificador. A dependência prevista pela premissa existe,
+portanto, mas só passa a decidir a escolha quando há restrição de custo ou
+de rótulos.
+
 O tipo de drift atua sobretudo por meio do momento do acionamento. A janela
 deslizante e o reset completo treinam o modelo exatamente da mesma forma e
 diferem apenas em quando o fazem (Seção~\ref{sec:estrategias}). Sob drift
@@ -33,13 +51,17 @@ abrupto e recorrente, o HDDDM detecta a mudança no próprio bloco em que ela
 ocorre, e um único retreinamento no momento certo basta; nesses casos, as
 estratégias acionadas por detecção aproximam-se da acurácia da janela
 gastando cerca de um quarto dos retreinamentos (Figura~\ref{fig:orcamento}). Sob drift
-gradual e incremental, o detector dispara no meio da transição e, na maioria
-das vezes, uma única vez, e o reset produz um modelo ajustado a uma
-distribuição intermediária. A análise com detector ideal
-(Tabela~\ref{tab:detector-ideal}) confirma que esse é um limite do
-acionamento único, e não apenas do detector: mesmo acionado no fim da
-transição, o reset continuou atrás da janela nos padrões lentos, porque o
-modelo anterior permanece em uso durante toda a transição. A comparação com
+gradual e incremental, a desvantagem do reset tem duas origens, de peso
+semelhante (Tabela~\ref{tab:reset-lentas}): em cerca de dois terços das
+streams, o detector dispara no meio da transição, na maioria das vezes uma
+única vez, e o reset produz um modelo ajustado a uma distribuição
+intermediária; no terço restante, o detector não sinaliza a mudança, e o
+reset permanece praticamente no nível do modelo sem retreinamento. A
+análise com detector ideal (Tabela~\ref{tab:detector-ideal}) mostra que
+parte dessa desvantagem é do acionamento único, e não apenas do detector:
+mesmo acionado no fim da transição, o reset continuou atrás da janela nos
+padrões lentos, porque o modelo anterior permanece em uso durante toda a
+transição. A comparação com
 a implementação de referência do HDDDM mostrou o mesmo padrão de detecção
 (Tabela~\ref{tab:validacao-hdddm}), o que indica que esse comportamento não é
 um artefato da implementação usada.
@@ -95,13 +117,18 @@ atualização é necessária.
 
 \subsection{Severidade}
 
-A severidade foi o segundo fator de maior efeito e interagiu com a
-estratégia, em concordância com \citeonline{wang2022elastic}, que relacionam a
-severidade do drift ao erro do modelo e à intensidade de adaptação
-necessária. Seu efeito
-mais visível foi ampliar o ganho de todas as estratégias sobre o controle e
-a desvantagem do retreinamento incremental, cujo modelo preserva um
-conhecimento tanto mais prejudicial quanto maior o deslocamento. Não se
+A severidade foi o segundo fator de maior efeito na ANOVA principal, mas
+boa parte desse efeito vem do controle: sem ele, o efeito da severidade e o
+de sua interação com a estratégia caem para menos da metade
+(Tabela~\ref{tab:anova-sem-controle}). A severidade condicionou, assim,
+sobretudo quanto o modelo sem retreinamento se degrada, o que está em
+concordância com \citeonline{wang2022elastic}, que relacionam a severidade
+do drift ao erro do modelo sob drift. Entre as estratégias de
+retreinamento, seu efeito mais visível foi ampliar a desvantagem do
+retreinamento incremental, cujo modelo preserva um conhecimento tanto mais
+prejudicial quanto maior o deslocamento, e permitir ao reset uma vantagem
+pequena, mas consistente, sob drift abrupto de severidade alta
+(Tabela~\ref{tab:reset-vs-janela}). Não se
 observou uma vantagem de estratégias conservadoras sob severidade baixa no
 fatorial principal: o incremental foi pior que o reset também nesse nível.
 Sob drift virtual, ao contrário, o incremental foi a melhor estratégia nas
@@ -185,49 +212,113 @@ não são especificados critérios de escolha.
 \section{Ameaças à Validade}
 \label{sec:ameacas}
 
-\textbf{Validade externa.} Os dados são sintéticos: quatro atributos
-gaussianos independentes, classe binária equilibrada, fronteira de decisão
-linear e transições de duração fixa. A independência entre atributos é
-também o que permite expressar a severidade observada como
-$1 - \prod_k \widehat{BC}_k$. Os resultados não se transferem
-automaticamente para dados reais, com atributos correlacionados, desbalanço
-de classes e transições de duração variável, como os conjuntos de
-referência Insects, SEA e STAGGER, usados em avaliações de detectores de
-drift como a de \citeonline{rocha2026}, que não foram considerados aqui. Um único detector foi avaliado,
-ainda que em duas implementações. No fatorial principal, os rótulos de cada
-bloco ficam disponíveis imediatamente após o teste; a análise com rótulos
-atrasados confirmou que essa hipótese favorece a janela deslizante, mas
-considerou apenas atrasos fixos e conhecidos, e não atrasos variáveis ou
-rótulos disponíveis para apenas parte das instâncias.
+A Tabela~\ref{tab:ameacas} resume as ameaças à validade identificadas, o que
+foi feito para tratar cada uma e o que, por causa dela, não se pode concluir
+a partir deste trabalho.
 
-\textbf{Validade interna.} Várias escolhas de projeto afetam os resultados.
-O tamanho da janela de treino, a natureza do drift, a cadência da janela e o
-parâmetro $\gamma$ do HDDDM foram variados nas análises complementares e de
-sensibilidade, e a principal conclusão do fatorial, a vantagem da janela
-deslizante, mostrou-se dependente do número de retreinamentos. Os
-hiperparâmetros dos classificadores não foram otimizados. A agenda da janela
-teve fase sorteada por stream para evitar que coincidisse com o início do
-drift. Como o drift começa sempre no início de um bloco, a latência de
-detecção nula observada nos padrões abrupto e recorrente é otimista em
-relação a um cenário em que a mudança ocorre no meio de um bloco.
-
-\textbf{Validade de construto.} No fatorial principal, o deslocamento de
-$p(X)$ é sempre acompanhado de uma mudança em $p(y \mid X)$, e a análise de
-drift puramente virtual mostrou que a ordenação das estratégias muda quando
-isso não ocorre; os resultados do fatorial principal valem, portanto, para
-drift real. A eficácia foi medida por acurácia, adequada a classes
-equilibradas, e o critério de recuperação (3 pontos percentuais da acurácia
-pré-drift) é uma convenção; por isso, o tempo de recuperação é apresentado
-junto com a fração de transições recuperadas.
-
-\textbf{Validade de conclusão.} As quinze execuções de cada repetição
-compartilham a mesma stream, o que foi tratado com uma ANOVA em parcelas
-subdivididas e com testes pareados por stream. Com 1.800 execuções, mesmo
-diferenças pequenas resultam em valores de $p$ muito baixos; por isso, os
-resultados são interpretados pelos tamanhos de efeito e pelas diferenças de
-acurácia, e não apenas pela significância. A análise de orçamento baseia-se
-na análise de sensibilidade, com cinco repetições por condição. A avaliação
-da orientação preliminar usou 60 streams de teste e classifica cada stream a
-partir de todos os seus episódios, o que a torna uma avaliação retrospectiva
-do mapeamento entre sinais e estratégias, e não de uma política executada em
-tempo real.
+{\footnotesize
+\begin{longtable}{>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{5.2cm}>{\raggedright\arraybackslash}p{5.2cm}}
+\caption{Ameaças à validade, tratamento e limites para as conclusões}
+\label{tab:ameacas}\\
+\toprule
+\textbf{Ameaça} & \textbf{O que foi feito} & \textbf{O que não se pode concluir} \\
+\midrule
+\endfirsthead
+\multicolumn{3}{l}{\textit{Continuação da Tabela~\ref{tab:ameacas}}}\\
+\toprule
+\textbf{Ameaça} & \textbf{O que foi feito} & \textbf{O que não se pode concluir} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+Dados sintéticos simples: quatro atributos gaussianos independentes, classes
+equilibradas, fronteira linear, transições de duração fixa &
+Severidade e padrão temporal controlados por construção; duas naturezas de
+drift (real e virtual) &
+Que a ordenação das estratégias se mantenha em dados reais, com atributos
+correlacionados, desbalanço de classes ou transições de duração variável,
+como os conjuntos Insects, SEA e STAGGER usados por \citeonline{rocha2026} \\
+\midrule
+Treino em um único bloco de 400 instâncias &
+Repetição com janelas de treino de quatro e oito blocos
+(Tabela~\ref{tab:janela-treino}) &
+Que a reativação seja equivalente ao reset em geral: com mais dados de
+treino, ela o superou no drift recorrente; nada se conclui sobre janelas
+maiores que oito blocos ou adaptativas \\
+\midrule
+Fronteira de decisão que acompanha os dados: todo drift do fatorial
+principal é real e virtual &
+Repetição com drift puramente virtual (Tabela~\ref{tab:drift-virtual}) &
+Que os resultados do fatorial principal valham para drift virtual, nem para
+drift real sem deslocamento de $p(X)$, que o detector não percebe \\
+\midrule
+Rótulos de cada bloco disponíveis logo após o teste &
+Repetição com atrasos fixos de dois, quatro e oito blocos
+(Tabela~\ref{tab:atraso}) &
+Como as estratégias se comportam com atrasos variáveis, rotulação parcial ou
+ausência de rótulos \\
+\midrule
+Número desigual de retreinamentos entre estratégias &
+Sensibilidade à cadência da janela e comparação com orçamento igualado
+(Tabelas~\ref{tab:sensibilidade} e~\ref{tab:orcamento}) &
+Que a vantagem da janela no fatorial principal se deva à estratégia em si,
+independentemente de ela retreinar cerca de quatro vezes mais \\
+\midrule
+Um único detector (HDDDM) e um valor de $\gamma$ &
+Validação contra a implementação de referência; $\gamma$ de 1,5 a 2,5;
+detector ideal (Tabelas~\ref{tab:validacao-hdddm}, \ref{tab:sensibilidade}
+e~\ref{tab:detector-ideal}) &
+Que outros detectores, como JSDDM, KSDDM ou os baseados em desempenho,
+produzam a mesma desvantagem das estratégias reativas nas transições lentas,
+metade da qual se deve a transições não detectadas \\
+\midrule
+Implementação do incremental: uma atualização por detecção, com o bloco da
+detecção; no Random Forest, 25 árvores novas somadas às 50 existentes; no
+XGBoost, 25 rodadas; no Naive Bayes, acúmulo de estatísticas sem
+esquecimento &
+Mesma implementação em todas as condições; resultado discutido por
+classificador &
+Que o retreinamento incremental seja, em geral, inferior ao reset: outras
+proporções de árvores, atualizações a cada bloco ou mecanismos de
+esquecimento podem mudar a ordenação \\
+\midrule
+Hiperparâmetros dos classificadores fixos e não otimizados &
+Mesmos valores em todas as condições &
+Como as estratégias se comparam com classificadores ajustados a cada
+cenário \\
+\midrule
+Mudanças sempre no início de um bloco e transições lentas de largura fixa
+(seis blocos) &
+Fase da agenda da janela sorteada por stream &
+Que a latência de detecção nula das mudanças abruptas se repita quando a
+mudança ocorre no meio de um bloco, nem como a vantagem da janela varia com
+transições mais longas ou mais curtas que a sua cadência \\
+\midrule
+Métricas: acurácia com classes equilibradas e recuperação definida a 3
+pontos percentuais da acurácia pré-drift &
+Tempo de recuperação apresentado com a fração de transições recuperadas &
+Como as estratégias se comparam sob desbalanço de classes, com métricas como
+F1 ou AUC, ou com outro critério de recuperação \\
+\midrule
+Execuções dependentes e grande número de testes &
+ANOVA em parcelas subdivididas; testes pareados por stream; correção de Holm
+nas comparações par a par; interpretação pelos tamanhos de efeito &
+Que diferenças pequenas, como a vantagem de 0,011 do reset no drift abrupto
+de severidade alta, sejam relevantes na prática; os valores de $p$ das
+reanálises da Tabela~\ref{tab:reset-vs-janela} não foram corrigidos \\
+\midrule
+Efeito da severidade ampliado pela condição de controle &
+ANOVA repetida sem o controle (Tabela~\ref{tab:anova-sem-controle}) &
+Que a severidade, por si só, seja determinante na escolha entre as
+estratégias de retreinamento \\
+\midrule
+Sinais favorecidos pelo desenho (três níveis de severidade bem separados e
+retorno exato ao estado anterior) e orientação avaliada retrospectivamente
+em 60 streams &
+Validação cruzada entre sementes; comparação com o oráculo e com políticas
+fixas &
+Que os sinais tenham a mesma qualidade com severidade contínua e
+recorrências imperfeitas, nem que a orientação funcione como política em
+tempo real \\
+\end{longtable}
+}

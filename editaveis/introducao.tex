@@ -28,10 +28,12 @@ relacionam a severidade à taxa de convergência do modelo e mostram, por uma
 análise de limites de erro, que quanto maior a severidade, maior o erro do
 modelo sob drift, e \citeonline{wang2024quadcdd} propõem caracterizar cada
 drift por seu início, fim, severidade e tipo, e não apenas pelo momento em que
-começa. A
-escolha da estratégia de resposta deveria, portanto, depender do tipo e da
-severidade do drift, além do classificador em uso, dependência conjunta que
-raramente é investigada de forma sistemática.
+começa. Daí
+decorre a premissa deste trabalho: a escolha da estratégia de resposta
+deveria depender do tipo e da severidade do drift, além do classificador em
+uso. Entre os trabalhos revisados (Seção~\ref{sec:relacionados}), porém,
+nenhum investiga essa dependência conjunta, variando ao mesmo tempo as
+características do drift, o classificador e a estratégia.
 
 Diante desse cenário, este trabalho é orientado pela seguinte questão de
 pesquisa: como a eficácia de diferentes estratégias de retreinamento varia em
@@ -58,37 +60,94 @@ futuras em pipelines de MLOps (Machine Learning Operations).
 O objetivo geral deste trabalho é avaliar como a eficácia de estratégias de
 retreinamento varia em função do tipo e da severidade do drift e do
 classificador monitorado, em ambiente de aprendizado em stream. Para
-alcançá-lo, são definidos os seguintes objetivos específicos:
+alcançá-lo, são definidos os seguintes objetivos específicos, cada um com a
+entrega que o atende:
 
 \begin{enumerate}
   \item construir um gerador de streams sintéticas no qual o padrão temporal
   e a severidade do drift sejam controlados por construção, com a
-  severidade definida pela distância de Hellinger em forma fechada;
+  severidade definida pela distância de Hellinger em forma fechada.
+  Entrega: o gerador descrito na Seção~\ref{sec:geracao_stream} e a
+  verificação de que a severidade estimada converge para a real
+  (Figura~\ref{fig:convergencia});
   \item implementar o detector HDDDM, as quatro estratégias de
   retreinamento e a condição de controle para três classificadores com
-  mecânicas distintas;
+  mecânicas distintas, de forma reprodutível. Entrega: o notebook descrito
+  na Seção~\ref{sec:disponibilidade}, com a implementação do detector
+  validada contra uma implementação de referência
+  (Tabela~\ref{tab:validacao-hdddm});
   \item comparar a eficácia e o custo das estratégias em um experimento
   fatorial e estimar os efeitos do tipo, da severidade e do classificador
-  sobre essa eficácia;
+  sobre essa eficácia. Entrega: as Seções~\ref{sec:res_eficacia}
+  a~\ref{sec:res_custo}, com a ANOVA da Tabela~\ref{tab:anova};
   \item verificar a robustez das conclusões a escolhas de projeto do
-  experimento, como o tamanho da janela de treino, a natureza do drift, o
-  número de retreinamentos permitido e o atraso dos rótulos;
+  experimento: o detector, a cadência da janela, o tamanho da janela de
+  treino, a natureza do drift, o número de retreinamentos permitido e o
+  atraso dos rótulos. Entrega: as Seções~\ref{sec:res_detector_ideal}
+  a~\ref{sec:res_complementares};
   \item avaliar em que medida sinais observáveis do detector estimam a
   severidade, a velocidade e a recorrência do drift, e se permitem esboçar
-  uma orientação preliminar de escolha de estratégia.
+  uma orientação preliminar de escolha de estratégia. Entrega: a
+  Seção~\ref{sec:res_derivada}, com as
+  Tabelas~\ref{tab:severidade-obs} e~\ref{tab:orientacao}.
 \end{enumerate}
+
+\section*{Principais Resultados e Contribuições}
+
+No experimento fatorial, a janela deslizante, retreinada em cadência fixa,
+foi a estratégia de maior acurácia em 29 das 36 combinações de tipo,
+severidade e classificador, com grande vantagem sob drift gradual e
+incremental. As análises complementares mostram, porém, que essa vantagem
+decorre em boa parte de a janela retreinar cerca de quatro vezes mais que as
+estratégias acionadas por detecção e de não depender do detector, que deixou
+de sinalizar cerca de um terço das transições lentas: com o mesmo número de
+retreinamentos, o reset completo foi mais eficaz sob drift abrupto e
+recorrente, e a janela, sob drift gradual e incremental; com rótulos
+atrasados, a reativação de modelos históricos passou a ser a mais eficaz sob
+drift recorrente; e, sob drift puramente virtual, o retreinamento
+incremental obteve o melhor desempenho. Os sinais observáveis do detector
+estimaram bem a severidade, a velocidade e a recorrência do drift, mas a
+orientação construída a partir deles não superou, em acurácia, a política
+fixa de sempre usar a janela deslizante.
+
+A premissa deste trabalho sustenta-se, assim, apenas em parte. Ela não se
+sustenta quando retreinar é barato e os rótulos chegam de imediato: nessa
+situação, uma política fixa, a janela deslizante com cadência curta, foi a
+melhor ou quase a melhor escolha em praticamente todas as condições. Ela se
+sustenta quando o número de retreinamentos é limitado, quando os rótulos
+demoram a chegar ou quando a natureza do drift muda: nessas situações, a
+estratégia mais eficaz passou a depender do tipo de drift e do
+classificador. A severidade, por sua vez, condicionou sobretudo a
+degradação do modelo sem retreinamento e, em menor grau, a escolha entre as
+estratégias.
+
+As contribuições do trabalho são: (i) um protocolo experimental
+reprodutível, disponibilizado em um notebook executável, que controla tipo,
+severidade e natureza do drift por construção e permite comparar a
+severidade real e a observada; (ii) evidência, em ambiente controlado, de
+que a comparação entre estratégias de retreinamento depende do número de
+retreinamentos considerado, e de que, com custo igual, o acionamento por
+detecção é mais eficiente para mudanças abruptas e o retreinamento
+agendado, para mudanças lentas; (iii) evidência de que a vantagem da
+atualização incremental depende de o conhecimento anterior continuar válido,
+e a da reativação de modelos, de o modelo histórico ter sido treinado com
+mais dados do que os disponíveis após a mudança ou de os rótulos chegarem
+com atraso; e (iv) a indicação de que a estatística de um detector baseado
+em distribuição, sem uso de rótulos, carrega informação sobre a severidade,
+a velocidade e a recorrência do drift.
 
 Este trabalho está organizado da seguinte forma. O Capítulo 1
 apresenta o referencial teórico,
 estabelecendo a definição formal de drift, suas dimensões de caracterização,
 os métodos de detecção, a operacionalização da severidade, as estratégias de
-retreinamento, os classificadores considerados e os sinais observáveis que
-fundamentam o desdobramento exploratório deste trabalho. O Capítulo 2
-descreve a metodologia, detalhando a geração da stream sintética, a
-configuração do detector, a adaptação dos classificadores ao ambiente de
-stream, a operacionalização das estratégias de retreinamento, o desenho
-experimental fatorial, as métricas de avaliação, a análise estatística e o
-protocolo de validação da questão derivada. O
+retreinamento, os classificadores considerados, os sinais observáveis que
+fundamentam o desdobramento exploratório deste trabalho e os trabalhos
+relacionados. O Capítulo 2 descreve a metodologia, detalhando a geração da
+stream sintética, a configuração do detector, a adaptação dos
+classificadores ao ambiente de stream, a operacionalização das estratégias
+de retreinamento, o desenho experimental fatorial, as métricas de avaliação,
+a análise estatística, as análises complementares, o protocolo de validação
+da questão derivada e a disponibilidade da implementação. O
 Capítulo~\ref{chap:resultados} apresenta os resultados, o
 Capítulo~\ref{chap:discussao} os discute à luz da literatura e das ameaças à
 validade, e o Capítulo~\ref{chap:conclusao} apresenta as conclusões e os

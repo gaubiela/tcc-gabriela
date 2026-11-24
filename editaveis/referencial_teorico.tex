@@ -338,10 +338,11 @@ Sem retreinamento (controle) & Não se aplica & Não se aplica & Nulo \\
 \end{tabular}
 \end{table}
 
-Essas quatro estratégias, contrastadas com a condição de controle,
-raramente são comparadas sob as mesmas condições
-experimentais, o que motiva a comparação sistemática proposta neste trabalho,
-sob condições controladas de tipo, severidade e classificador.
+Entre os trabalhos revisados (Seção~\ref{sec:relacionados}), essas quatro
+estratégias e a condição de controle não são comparadas sob as mesmas
+condições experimentais, o que motiva a comparação sistemática proposta
+neste trabalho, sob condições controladas de tipo, severidade e
+classificador.
 
 No entanto, a eficácia de cada estratégia não é uniforme. Conforme demonstram
 \citeonline{rahmani2023} com dados reais, o desempenho do retreinamento depende
@@ -428,3 +429,51 @@ desdobramento exploratório concentra-se nas dimensões temporal e de
 severidade, únicas para as quais os sinais observáveis do detector adotado
 oferecem uma aproximação razoável, aspecto que fundamenta o desenho
 experimental descrito na metodologia deste trabalho.
+\section{Trabalhos Relacionados}
+\label{sec:relacionados}
+Os trabalhos revisados neste capítulo abordam o drift sob ângulos distintos,
+e é útil organizá-los segundo o que cada um faz variar. Um primeiro grupo
+concentra-se na detecção e no entendimento do drift.
+\citeonline{rocha2026} propõe uma arquitetura conceitual de monitoramento
+contínuo de entradas e avalia três detectores baseados em distribuição: o
+HDDDM e os métodos JSDDM e KSDDM, propostos naquele trabalho. A avaliação
+usa conjuntos de dados reais e sintéticos de referência, como Insects, SEA e
+STAGGER, mas fixa o classificador (Naive Bayes) e a resposta ao drift
+(atualização incremental enquanto não há drift e reset completo quando ele é
+detectado), processa os dados em lote e não mede a severidade das mudanças.
+\citeonline{komorniczak2022} usam medidas de magnitude do drift calculadas
+sobre lotes de dados como base de um detector, e
+\citeonline{wang2024quadcdd} propõem caracterizar cada episódio por seu
+início, fim, severidade e tipo. Nesses trabalhos, a severidade aparece como
+informação a ser detectada ou descrita, e não como condição que altere a
+resposta ao drift.
+
+Um segundo grupo propõe métodos de adaptação voltados a uma situação
+específica: o reaproveitamento de classificadores de conceitos anteriores
+para drift recorrente \cite{sun2018,li2021}, um modelo de misturas
+gaussianas capaz de tratar real e virtual drift \cite{oliveira2023}, um
+boosting cujo número de iterações de adaptação se ajusta à severidade
+\cite{wang2022elastic} e uma floresta aleatória que substitui árvores
+conforme detecta drift \cite{gomes2017arf}. Cada um compara o método
+proposto com alternativas da literatura na situação para a qual foi
+concebido, mas não compara estratégias genéricas de retreinamento entre
+situações distintas.
+
+Um terceiro grupo compara respostas ao drift, mas variando uma dimensão de
+cada vez. \citeonline{rahmani2023} comparam formas de retreinar um mesmo
+classificador sob diferentes tipos de mudança em dados clínicos;
+\citeonline{barddal2016} aplicam um mesmo mecanismo de adaptação a
+classificadores distintos; e \citeonline{webb2016} observam, em experimentos
+preliminares, que classificadores distintos respondem de formas distintas a
+drifts com características diferentes.
+
+Entre os trabalhos revisados, portanto, nenhum varia ao mesmo tempo o padrão
+temporal e a severidade do drift, o classificador e a estratégia de
+retreinamento, nem compara as quatro estratégias descritas na
+Seção~\ref{sec:estrategias} sob as mesmas condições. É nesse sentido,
+restrito aos trabalhos aqui revisados e sem a pretensão de uma revisão
+sistemática da literatura, que se afirma neste trabalho que essa dependência
+conjunta raramente é investigada. O desenho fatorial descrito no
+Capítulo~2 faz o movimento complementar ao dos trabalhos do primeiro grupo:
+fixa o detector e varia o tipo e a severidade do drift, o classificador e a
+estratégia.

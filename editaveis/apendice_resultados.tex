@@ -7,10 +7,18 @@
 
 As tabelas a seguir apresentam a acurácia prequential pós-drift média de
 cada estratégia nas doze combinações de tipo e severidade, para cada
-classificador.
+classificador, com o desvio-padrão entre as dez repetições entre
+parênteses. A dispersão é pequena para a janela deslizante (em geral abaixo
+de 0,015) e grande para as estratégias acionadas por detecção nas
+combinações em que o detector ora sinaliza a mudança, ora não, o que
+reforça a leitura da Seção~\ref{sec:res_eficacia}: a variabilidade dessas
+estratégias vem sobretudo do detector. Ao final, a
+Tabela~\ref{tab:anova-sem-controle} apresenta a ANOVA da
+Seção~\ref{sec:res_estatistica} repetida sem a condição de controle.
 
 \input{tabelas/tab_acc_NaiveBayes}
 \input{tabelas/tab_acc_RandomForest}
 \input{tabelas/tab_acc_XGBoost}
+\input{tabelas/tab_anova_sem_controle}
 
 \end{apendicesenv}
