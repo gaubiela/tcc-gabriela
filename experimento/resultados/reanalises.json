@@ -1,0 +1,254 @@
+{
+ "lentas": [
+  {
+   "grupo": "durante a transição",
+   "n": 40,
+   "reset": 0.7891,
+   "reset_ideal": 0.8392,
+   "janela": 0.8612,
+   "controle": 0.6335,
+   "dif_janela_reset": 0.0721,
+   "contribuicao": 0.0481
+  },
+  {
+   "grupo": "após a transição",
+   "n": 1,
+   "reset": 0.824,
+   "reset_ideal": 0.8114,
+   "janela": 0.8357,
+   "controle": 0.5486,
+   "dif_janela_reset": 0.0116,
+   "contribuicao": 0.0002
+  },
+  {
+   "grupo": "sem detecção",
+   "n": 19,
+   "reset": 0.6931,
+   "reset_ideal": 0.8509,
+   "janela": 0.8674,
+   "controle": 0.6857,
+   "dif_janela_reset": 0.1743,
+   "contribuicao": 0.0552
+  }
+ ],
+ "dif_total_lentas": 0.10345486111111112,
+ "reset_vs_janela": [
+  {
+   "tipo": "abrupto",
+   "severidade": "alta",
+   "classificador": "NaiveBayes",
+   "dif_media": 0.011,
+   "dp": 0.0105,
+   "vitorias_reset": 9,
+   "n": 10,
+   "p": 0.0098
+  },
+  {
+   "tipo": "abrupto",
+   "severidade": "alta",
+   "classificador": "RandomForest",
+   "dif_media": 0.01,
+   "dp": 0.0143,
+   "vitorias_reset": 8,
+   "n": 10,
+   "p": 0.0371
+  },
+  {
+   "tipo": "abrupto",
+   "severidade": "alta",
+   "classificador": "XGBoost",
+   "dif_media": 0.0108,
+   "dp": 0.0123,
+   "vitorias_reset": 9,
+   "n": 10,
+   "p": 0.0059
+  },
+  {
+   "tipo": "abrupto",
+   "severidade": "alta",
+   "classificador": "média dos classificadores",
+   "dif_media": 0.0106,
+   "dp": 0.0113,
+   "vitorias_reset": 9,
+   "n": 10,
+   "p": 0.0195
+  },
+  {
+   "tipo": "recorrente",
+   "severidade": "media",
+   "classificador": "NaiveBayes",
+   "dif_media": 0.0182,
+   "dp": 0.048,
+   "vitorias_reset": 7,
+   "n": 10,
+   "p": 0.2754
+  },
+  {
+   "tipo": "recorrente",
+   "severidade": "media",
+   "classificador": "RandomForest",
+   "dif_media": 0.0151,
+   "dp": 0.0456,
+   "vitorias_reset": 7,
+   "n": 10,
+   "p": 0.2754
+  },
+  {
+   "tipo": "recorrente",
+   "severidade": "media",
+   "classificador": "XGBoost",
+   "dif_media": 0.016,
+   "dp": 0.0429,
+   "vitorias_reset": 7,
+   "n": 10,
+   "p": 0.2324
+  },
+  {
+   "tipo": "recorrente",
+   "severidade": "media",
+   "classificador": "média dos classificadores",
+   "dif_media": 0.0164,
+   "dp": 0.0454,
+   "vitorias_reset": 7,
+   "n": 10,
+   "p": 0.2754
+  }
+ ],
+ "anova_sem_controle": [
+  {
+   "termo": "estrategia",
+   "estrato": "dentro das streams",
+   "df": 3.0,
+   "F": 539.031,
+   "p": 0.0,
+   "eta2_parcial": 0.5765,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo",
+   "estrato": "entre streams",
+   "df": 3.0,
+   "F": 14.7321,
+   "p": 0.0,
+   "eta2_parcial": 0.2904,
+   "df_erro": 108.0
+  },
+  {
+   "termo": "tipo:estrategia",
+   "estrato": "dentro das streams",
+   "df": 9.0,
+   "F": 49.1939,
+   "p": 0.0,
+   "eta2_parcial": 0.2715,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "classificador:estrategia",
+   "estrato": "dentro das streams",
+   "df": 6.0,
+   "F": 60.5722,
+   "p": 0.0,
+   "eta2_parcial": 0.2343,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "severidade",
+   "estrato": "entre streams",
+   "df": 2.0,
+   "F": 12.9896,
+   "p": 0.0,
+   "eta2_parcial": 0.1939,
+   "df_erro": 108.0
+  },
+  {
+   "termo": "severidade:estrategia",
+   "estrato": "dentro das streams",
+   "df": 6.0,
+   "F": 30.1559,
+   "p": 0.0,
+   "eta2_parcial": 0.1322,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "classificador",
+   "estrato": "dentro das streams",
+   "df": 2.0,
+   "F": 80.4833,
+   "p": 0.0,
+   "eta2_parcial": 0.1193,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo:severidade",
+   "estrato": "entre streams",
+   "df": 6.0,
+   "F": 2.3534,
+   "p": 0.0356,
+   "eta2_parcial": 0.1156,
+   "df_erro": 108.0
+  },
+  {
+   "termo": "tipo:severidade:estrategia",
+   "estrato": "dentro das streams",
+   "df": 18.0,
+   "F": 4.8288,
+   "p": 0.0,
+   "eta2_parcial": 0.0682,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "severidade:classificador:estrategia",
+   "estrato": "dentro das streams",
+   "df": 12.0,
+   "F": 6.0594,
+   "p": 0.0,
+   "eta2_parcial": 0.0577,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo:classificador:estrategia",
+   "estrato": "dentro das streams",
+   "df": 18.0,
+   "F": 2.2005,
+   "p": 0.0027,
+   "eta2_parcial": 0.0323,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "severidade:classificador",
+   "estrato": "dentro das streams",
+   "df": 4.0,
+   "F": 7.5681,
+   "p": 0.0,
+   "eta2_parcial": 0.0248,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo:classificador",
+   "estrato": "dentro das streams",
+   "df": 6.0,
+   "F": 4.5289,
+   "p": 0.0002,
+   "eta2_parcial": 0.0224,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo:severidade:classificador:estrategia",
+   "estrato": "dentro das streams",
+   "df": 36.0,
+   "F": 0.3262,
+   "p": 1.0,
+   "eta2_parcial": 0.0098,
+   "df_erro": 1188.0
+  },
+  {
+   "termo": "tipo:severidade:classificador",
+   "estrato": "dentro das streams",
+   "df": 12.0,
+   "F": 0.8432,
+   "p": 0.6056,
+   "eta2_parcial": 0.0084,
+   "df_erro": 1188.0
+  }
+ ]
+}

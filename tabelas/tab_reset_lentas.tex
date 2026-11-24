@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Acurácia pós-drift nas streams graduais e incrementais conforme o momento da detecção}
+\label{tab:reset-lentas}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lrrrrrrr}
+\toprule
+Detecção na transição & Streams & Reset & Reset (detector ideal) & Janela & Controle & Janela $-$ reset & Contribuição \\
+\midrule
+Durante a transição & 40 & 0,789 & 0,839 & 0,861 & 0,633 & 0,072 & 0,048 \\
+Após a transição & 1 & 0,824 & 0,811 & 0,836 & 0,549 & 0,012 & 0,000 \\
+Sem detecção & 19 & 0,693 & 0,851 & 0,867 & 0,686 & 0,174 & 0,055 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Médias dos três classificadores. Contribuição: parcela da diferença total entre janela e reset (0,103) que vem de cada grupo de streams.}
+\end{table}

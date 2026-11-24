@@ -1,0 +1,30 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{ANOVA em parcelas subdivididas da acurácia pós-drift, sem a condição de controle}
+\label{tab:anova-sem-controle}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{llrrrr}
+\toprule
+Termo & Estrato & gl & F & $p$ & $\eta^2_p$ \\
+\midrule
+Estratégia & Dentro & 3; 1188 & 539,03 & $<$ 0,001 & 0,576 \\
+Tipo & Entre & 3; 108 & 14,73 & $<$ 0,001 & 0,290 \\
+Tipo $\times$ Estratégia & Dentro & 9; 1188 & 49,19 & $<$ 0,001 & 0,271 \\
+Classificador $\times$ Estratégia & Dentro & 6; 1188 & 60,57 & $<$ 0,001 & 0,234 \\
+Severidade & Entre & 2; 108 & 12,99 & $<$ 0,001 & 0,194 \\
+Severidade $\times$ Estratégia & Dentro & 6; 1188 & 30,16 & $<$ 0,001 & 0,132 \\
+Classificador & Dentro & 2; 1188 & 80,48 & $<$ 0,001 & 0,119 \\
+Tipo $\times$ Severidade & Entre & 6; 108 & 2,35 & 0,036 & 0,116 \\
+Tipo $\times$ Severidade $\times$ Estratégia & Dentro & 18; 1188 & 4,83 & $<$ 0,001 & 0,068 \\
+Severidade $\times$ Classificador $\times$ Estratégia & Dentro & 12; 1188 & 6,06 & $<$ 0,001 & 0,058 \\
+Tipo $\times$ Classificador $\times$ Estratégia & Dentro & 18; 1188 & 2,20 & 0,003 & 0,032 \\
+Severidade $\times$ Classificador & Dentro & 4; 1188 & 7,57 & $<$ 0,001 & 0,025 \\
+Tipo $\times$ Classificador & Dentro & 6; 1188 & 4,53 & $<$ 0,001 & 0,022 \\
+Tipo $\times$ Severidade $\times$ Classificador $\times$ Estratégia & Dentro & 36; 1188 & 0,33 & 1,000 & 0,010 \\
+Tipo $\times$ Severidade $\times$ Classificador & Dentro & 12; 1188 & 0,84 & 0,606 & 0,008 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Mesmo procedimento da Tabela de ANOVA principal, com as quatro estratégias de retreinamento.}
+\end{table}

@@ -20,6 +20,16 @@ A execução completa (180 condições × 10 repetições, mais a análise de se
 - `figuras/resultados/`: figuras geradas pelo notebook;
 - `tabelas/`: tabelas geradas pelo notebook.
 
+## Versões e reprodução
+
+Os resultados do texto foram obtidos com Python 3.13 e as versões listadas em `requirements.txt`; com elas, uma nova execução reproduz os resultados de forma idêntica (as sementes são fixas). No Colab, para usar exatamente essas versões, execute antes do notebook:
+
+```
+!pip install -r https://raw.githubusercontent.com/gaubiela/tcc-gabriela/v1.0/experimento/requirements.txt
+```
+
+e reinicie o ambiente de execução. A ANOVA em parcelas subdivididas (Tabela 8 do texto) é gerada na Seção 7.1 do notebook; as reanálises (streams lentas, reset × janela e ANOVA sem o controle), na Seção 13.
+
 ## Dependências
 
 Python 3, NumPy, pandas, SciPy, scikit-learn, XGBoost, statsmodels, matplotlib e joblib (todas disponíveis no Colab; o notebook instala XGBoost e statsmodels se faltarem).

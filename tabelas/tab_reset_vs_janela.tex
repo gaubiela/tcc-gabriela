@@ -1,0 +1,23 @@
+\begin{table}[htbp]
+\centering
+\small
+\caption{Diferença de acurácia pós-drift entre o reset completo e a janela deslizante nas combinações em que o reset teve a maior média}
+\label{tab:reset-vs-janela}
+\begin{adjustbox}{max width=\textwidth}
+\begin{tabular}{lllrrrr}
+\toprule
+Tipo & Severidade & Classificador & Reset $-$ janela & DP & Reset melhor & $p$ \\
+\midrule
+Abrupto & Alta & NaiveBayes & 0,011 & 0,011 & 9 de 10 & 0,010 \\
+ &  & RandomForest & 0,010 & 0,014 & 8 de 10 & 0,037 \\
+ &  & XGBoost & 0,011 & 0,012 & 9 de 10 & 0,006 \\
+ &  & Média & 0,011 & 0,011 & 9 de 10 & 0,020 \\
+Recorrente & Média & NaiveBayes & 0,018 & 0,048 & 7 de 10 & 0,275 \\
+ &  & RandomForest & 0,015 & 0,046 & 7 de 10 & 0,275 \\
+ &  & XGBoost & 0,016 & 0,043 & 7 de 10 & 0,232 \\
+ &  & Média & 0,016 & 0,045 & 7 de 10 & 0,275 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\par\vspace{2pt}{\footnotesize Diferenças pareadas por repetição; $p$: teste de Wilcoxon pareado, sem correção para comparações múltiplas.}
+\end{table}
