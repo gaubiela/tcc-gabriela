@@ -164,11 +164,13 @@ devem ser lidos com cautela, porque o desenho os favorece: a severidade
 assume apenas três valores bem separados, o que eleva a correlação, e, no
 padrão recorrente, o retorno ao estado anterior é exato, o que torna a
 recorrência fácil de reconhecer. Ainda assim, indicam que parte do
-entendimento do drift, componente no qual, segundo \citeonline{lu2018}, poucos
-métodos respondem como e onde a mudança ocorre, pode ser extraída de um
-detector baseado em distribuição sem uso de rótulos, em linha com o uso de
-medidas de magnitude do drift calculadas sobre lotes de dados como sinal de
-detecção \cite{komorniczak2022}.
+entendimento do drift pode ser extraída de um detector baseado em
+distribuição sem uso de rótulos. Que a estatística desses detectores reflete
+a severidade já é reconhecido por \citeonline{lu2018}; a velocidade da
+divergência e a distância ao repositório estendem esse uso aos padrões
+temporal e recorrente. O uso da severidade observada como sinal segue a
+mesma linha das medidas de magnitude do drift calculadas sobre lotes de
+dados que \citeonline{komorniczak2022} empregam na detecção.
 
 A orientação construída a partir desses sinais, quando avaliada apenas pela
 acurácia, não superou a política fixa de sempre usar a janela deslizante,

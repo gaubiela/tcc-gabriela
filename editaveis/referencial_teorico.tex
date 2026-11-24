@@ -125,10 +125,13 @@ caracterizar o tipo de drift é, na prática, mais difícil do que a
 formalização sugere. Conforme organizam \citeonline{lu2018}, a pesquisa da
 área divide-se em três componentes, a detecção de drift, que responde se a
 mudança ocorre, o entendimento de drift, que responde quando, como, onde e
-com que intensidade ela ocorre, e a adaptação ao drift, e observam que poucos
-métodos são capazes de responder como e onde a mudança ocorre. Esse reconhecimento é central para este
-trabalho, cujo objetivo se apoia justamente sobre os sinais que permanecem
-observáveis diante dessa dificuldade. Das quatro dimensões apresentadas, este
+com que intensidade ela ocorre, e a adaptação ao drift. Ao comparar os
+detectores sob esse componente, observam que todos identificam quando a
+mudança ocorre, que a maioria dos baseados em distribuição também estima sua
+severidade (como) por meio da estatística de teste, mas que poucos localizam
+onde ela ocorre. Esse panorama é central para este
+trabalho, cujo objetivo se apoia justamente sobre os sinais que a
+estatística de um detector baseado em distribuição torna observáveis. Das quatro dimensões apresentadas, este
 trabalho manipula experimentalmente a temporal e a quantitativa, únicas
 diretamente acessíveis a partir do detector adotado (Seção~\ref{sec:deteccao});
 as dimensões conceitual e estrutural permanecem fora do escopo experimental,
@@ -460,8 +463,9 @@ concebido, mas não compara estratégias genéricas de retreinamento entre
 situações distintas.
 
 Um terceiro grupo compara respostas ao drift, mas variando uma dimensão de
-cada vez. \citeonline{rahmani2023} comparam formas de retreinar um mesmo
-classificador sob diferentes tipos de mudança em dados clínicos;
+cada vez. \citeonline{rahmani2023} comparam formas de retreinar dois modelos
+(XGBoost e uma rede neural recorrente) sob diferentes tipos de mudança em
+dados clínicos;
 \citeonline{barddal2016} aplicam um mesmo mecanismo de adaptação a
 classificadores distintos; e \citeonline{webb2016} observam, em experimentos
 preliminares, que classificadores distintos respondem de formas distintas a
