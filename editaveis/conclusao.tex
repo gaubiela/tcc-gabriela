@@ -5,7 +5,7 @@ Este trabalho investigou como a eficácia de estratégias de retreinamento
 varia em função do tipo e da severidade do drift e do classificador
 monitorado, por meio de um experimento fatorial controlado com 180 condições
 e 1.800 execuções em ambiente de stream, complementado por análises que
-variam o detector, a cadência da janela, o tamanho da janela de treino, a
+substituem o detector por um detector ideal e variam seu limiar, a cadência da janela, o tamanho da janela de treino, a
 natureza do drift, o número de retreinamentos permitido e o atraso dos
 rótulos.
 
@@ -18,8 +18,8 @@ amostra cresce (Figura~\ref{fig:convergencia}).
 
 O segundo objetivo, implementar de forma reprodutível o detector, as
 estratégias e os classificadores, foi atingido: o notebook descrito na
-Seção~\ref{sec:disponibilidade} reproduz de forma idêntica todas as tabelas e
-figuras do trabalho, e a implementação do HDDDM concordou com a
+Seção~\ref{sec:disponibilidade} reproduz de forma idêntica todos os resultados
+do trabalho, exceto os tempos de treino, medidos em tempo de relógio, e a implementação do HDDDM concordou com a
 implementação de referência em 90,6\% dos blocos, com o mesmo padrão de
 detecção por tipo de drift (Tabela~\ref{tab:validacao-hdddm}).
 

@@ -14,9 +14,10 @@ de um modelo treinado sobre uma distribuição que já não representa o present
 Detectar quando essa mudança ocorreu é hoje um problema relativamente maduro,
 com métodos que monitoram a distribuição das entradas ou o desempenho do
 classificador \cite{bayram2022}. O que permanece pouco resolvido é a etapa
-seguinte, a de decidir como reagir ao drift detectado. Uma prática comum é
-adotar uma resposta única e fixa, tipicamente descartar o modelo e
-retreiná-lo do zero. Há evidências, no entanto, de que nenhuma resposta é
+seguinte, a de decidir como reagir ao drift detectado. Uma resposta frequente é
+adotar uma política única e fixa, tipicamente descartar o modelo e
+retreiná-lo do zero quando o drift é detectado, como na avaliação de
+\citeonline{rocha2026}. Há evidências, no entanto, de que nenhuma resposta é
 ótima em todos os cenários: estratégias adequadas para real drift podem não
 ser as mais indicadas sob virtual drift \cite{oliveira2023}, o
 reaproveitamento de modelos traz ganhos quando conceitos reaparecem

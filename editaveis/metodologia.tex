@@ -28,7 +28,7 @@ Dentro da abordagem experimental, a escolha por um desenho fatorial
 estratégias, se justifica pela própria formulação da questão principal: como
 ela pergunta simultaneamente sobre a variação da eficácia em função de tipo,
 severidade e classificador, e sobre a interação conjunta entre essas três
-variáveis, um desenho fatorial completo é a única forma de estimar tanto os
+variáveis, um desenho fatorial completo é a forma mais direta de estimar tanto os
 efeitos principais quanto as interações entre os três fatores na mesma
 bateria de execuções. O ambiente de stream, por sua vez, é o que possibilita
 testar a questão derivada: como
@@ -185,11 +185,11 @@ pares de blocos de uma mesma distribuição, estimado apenas a partir de
 trechos estacionários das streams, sem uso do ground truth de severidade.
 
 \section{Classificadores e Adaptação a Stream}
-Os três classificadores descritos na Seção de Classificadores do referencial
-teórico permanecem, entre atualizações, congelados no estado em que foram
+Os três classificadores descritos na Seção~\ref{sec:classificadores}
+permanecem, entre atualizações, congelados no estado em que foram
 treinados pela última vez; nenhum deles se atualiza continuamente por
-exigência própria. O Naive Bayes atualiza contadores de forma nativa e
-imediata; o Random Forest, inspirado em variantes adaptativas como o ARF
+exigência própria. O Naive Bayes poderia atualizar seus contadores a cada
+bloco, mas aqui só o faz quando uma estratégia o aciona; o Random Forest, inspirado em variantes adaptativas como o ARF
 \cite{gomes2017arf}, mantém um conjunto de árvores ao qual novas árvores
 podem ser acrescentadas; o
 XGBoost mantém o conjunto de árvores já construído e só o modifica quando
@@ -197,7 +197,7 @@ uma estratégia de retreinamento é efetivamente acionada. Essa uniformidade é
 deliberada: ela garante que a variável manipulada seja a estratégia de
 retreinamento, e não uma exigência de atualização embutida em um classificador
 específico; em particular, a adaptação de XGBoost a stream via lotes
-pequenos (referencial teórico, Seção de Classificadores) descreve apenas
+pequenos (Seção~\ref{sec:classificadores}) descreve apenas
 \emph{como} uma atualização é executada quando decidida, não uma atualização
 contínua imposta pelo classificador.
 
@@ -251,7 +251,7 @@ variando apenas o procedimento técnico de ajuste de parâmetros:
 Em todas as estratégias, a janela de instâncias mais recente corresponde ao
 último bloco (400 instâncias), e o modelo inicial é treinado sobre o primeiro
 bloco da stream. A janela deslizante retreina a cada quatro blocos; a fase
-dessa agenda é sorteada para cada stream, pois, como o drift começa em um
+dessa agenda é sorteada para cada stream, pois, como, nos padrões não recorrentes, o drift começa em um
 bloco múltiplo de quatro, uma agenda fixa faria a janela retreinar sempre
 exatamente no primeiro bloco do drift, o que a favoreceria artificialmente. Na
 reativação, a cada detecção o modelo corrente é arquivado no repositório
@@ -417,15 +417,15 @@ orçamento reaproveita a análise de sensibilidade e, portanto, tem cinco
 repetições por condição.
 
 \section{Protocolo de Validação da Questão Derivada}
-Para responder à questão derivada, cada condição do experimento fatorial
-registra, além da eficácia da estratégia, os três sinais observáveis
+Para responder à questão derivada, cada episódio de detecção do experimento
+fatorial registra, além da eficácia da estratégia, os três sinais observáveis
 definidos na Seção~\ref{sec:sinais}: a severidade observada pelo HDDDM,
 comparada à severidade real conhecida por injeção (Seção~\ref{sec:severidade});
 a velocidade de variação da divergência entre blocos sucessivos, comparada
-ao padrão temporal real da condição; e a semelhança com distribuições
+ao padrão temporal real da stream; e a semelhança com distribuições
 históricas, comparada à ocorrência real de recorrência. A concordância entre
 cada sinal observável e a característica real correspondente é analisada
-condição a condição, permitindo avaliar em que medida os sinais disponíveis
+em cada transição detectada, permitindo avaliar em que medida os sinais disponíveis
 em produção, sem acesso a esse ground truth, sustentariam uma recomendação
 de estratégia equivalente à observada no experimento controlado.
 
@@ -457,7 +457,8 @@ XGBoost 3.4.1, statsmodels 0.15.0, joblib 1.6.0, matplotlib 3.11.2 e
 menelaus 0.2.0. Todas as sementes aleatórias são fixas: a semente de cada
 stream é determinada pelo tipo, pela severidade e pela repetição, e as
 quinze execuções de uma repetição usam a mesma stream. Com essas versões,
-uma nova execução reproduz os resultados de forma idêntica.
+uma nova execução reproduz os resultados de forma idêntica, exceto os tempos
+de treino da Tabela~\ref{tab:custo}, que dependem da máquina.
 
 O notebook, os dados gerados (resultados por execução, sinais do detector e
 resultados das análises complementares, em CSV), as tabelas em \LaTeX{} e as

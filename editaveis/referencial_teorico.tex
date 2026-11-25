@@ -134,8 +134,9 @@ trabalho, cujo objetivo se apoia justamente sobre os sinais que a
 estatística de um detector baseado em distribuição torna observáveis. Das quatro dimensões apresentadas, este
 trabalho manipula experimentalmente a temporal e a quantitativa, únicas
 diretamente acessíveis a partir do detector adotado (Seção~\ref{sec:deteccao});
-as dimensões conceitual e estrutural permanecem fora do escopo experimental,
-tratadas como características latentes não abordadas por este trabalho.
+a dimensão estrutural permanece fora do escopo, e a conceitual não é
+manipulada no fatorial principal, sendo examinada apenas em uma análise
+complementar com drift puramente virtual (Seção~\ref{sec:complementares}).
 
 \section{Detecção de Drift}
 \label{sec:deteccao}
@@ -359,6 +360,7 @@ deveria ser tratada como uma escolha única e fixa, mas condicionada às
 características da mudança e do modelo em uso.
 
 \section{Classificadores}
+\label{sec:classificadores}
 Além da estratégia de resposta, o próprio classificador monitorado influencia
 a forma como o sistema reage ao drift. Conforme mostram
 \citeonline{barddal2016}, um mesmo mecanismo de adaptação, a ponderação
@@ -426,8 +428,9 @@ desempenho dependem de que esse retorno, isto é, os rótulos verdadeiros,
 chegue rapidamente \cite{bayram2022}. Como o detector adotado neste
 trabalho pertence à família baseada em distribuição (Seção~\ref{sec:deteccao}),
 esse sinal de erro não integra o mecanismo de detecção, o que mantém a
-dimensão conceitual como uma característica latente, fora do escopo deste
-trabalho. Diante desse limite, a orientação preliminar buscada como
+dimensão conceitual como uma característica latente, não estimável pelo
+detector, ainda que examinada experimentalmente em uma análise
+complementar. Diante desse limite, a orientação preliminar buscada como
 desdobramento exploratório concentra-se nas dimensões temporal e de
 severidade, únicas para as quais os sinais observáveis do detector adotado
 oferecem uma aproximação razoável, aspecto que fundamenta o desenho

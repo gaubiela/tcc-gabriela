@@ -115,7 +115,8 @@ entre a janela e o reset nos padrões lentos, 0,048 vem das streams em que a
 detecção ocorreu durante a transição e 0,055 das streams sem detecção: a
 desvantagem do reset nas mudanças lentas decorre em partes semelhantes de
 retreinar cedo demais e de não detectar a mudança. As streams sem detecção
-concentram-se na severidade baixa (10 das 20) e média (7 das 20).
+concentram-se nas severidades baixa e média: deixaram de ser detectadas
+10 das 20 streams lentas de severidade baixa e 7 das 20 de severidade média.
 
 \input{tabelas/tab_reset_lentas}
 
@@ -187,8 +188,8 @@ Parte desses efeitos, no entanto, vem do controle, cujo desempenho muito
 inferior amplia as diferenças entre estratégias e cresce com a severidade.
 Repetida sem o controle (Tabela~\ref{tab:anova-sem-controle}, no
 Apêndice~\ref{ap:tabelas}), a ANOVA mantém a estratégia como o fator de
-maior efeito ($\eta^2_p = 0{,}577$) e preserva as interações tipo $\times$
-estratégia (0,272) e classificador $\times$ estratégia (0,234), mas reduz
+maior efeito ($\eta^2_p = 0{,}576$) e preserva as interações tipo $\times$
+estratégia (0,271) e classificador $\times$ estratégia (0,234), mas reduz
 bastante o efeito da severidade (de 0,439 para 0,194) e da interação
 severidade $\times$ estratégia (de 0,311 para 0,132). Entre as quatro
 estratégias de retreinamento, portanto, o tipo de drift e o classificador
